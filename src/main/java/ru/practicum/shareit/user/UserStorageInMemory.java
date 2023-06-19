@@ -20,7 +20,7 @@ public class UserStorageInMemory implements UserStorage {
     protected final HashMap<Integer, User> users = new HashMap<>();
 
     public User createUser(User user) {
-        if (userValidation.userValidation(user)) {
+        if (userValidation.userCreateValidation(user, users)) {
             idUser++;
             user.setId(idUser);
             users.put(idUser, user);
@@ -30,9 +30,14 @@ public class UserStorageInMemory implements UserStorage {
     }
 
     public int updateUser(User user) {
-        if (userValidation.userValidation(user)) {
+        if (userValidation.userUpdateValidation(user, users)) {
             if (users.containsKey(user.getId())) {
                 int id = user.getId();
+                if (user.getEmail() == null){
+                    user.setEmail(users.get(id).getEmail());
+                } else  if (user.getName() == null){
+                    user.setName(users.get(id).getName());
+                }
                 users.remove(id);
                 users.put(id, user);
                 log.trace("Обновлены данные пользователя " + user);
