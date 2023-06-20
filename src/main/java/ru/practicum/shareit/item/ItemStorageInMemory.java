@@ -79,7 +79,7 @@ public class ItemStorageInMemory implements ItemStorage {
 
     public List<Item> getItemByText(String text) {
         List<Item> list = new ArrayList<>();
-        if(text.equals("")){
+        if (text.equals("")) {
             return list;
         }
         for (Item item : items.values()) {

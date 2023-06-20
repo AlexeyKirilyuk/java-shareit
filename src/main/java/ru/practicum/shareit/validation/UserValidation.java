@@ -25,7 +25,7 @@ public class UserValidation {
             throw new ValidationException("Ошибка валидации - электронная почта должна содержать символ @");
         } else if (user.getName() == null || Objects.equals(user.getName(), "")) {
             user.setName(user.getEmail());
-        }else for(Map.Entry<Integer, User> entry : users.entrySet()){
+        } else for (Map.Entry<Integer, User> entry : users.entrySet()) {
             User SavedUser = entry.getValue();
             if (SavedUser.getEmail().equals(user.getEmail())) {
                 log.debug("Ошибка - пользователь с таким Email уже существует.");
@@ -35,6 +35,7 @@ public class UserValidation {
 
         return true;
     }
+
     public boolean userUpdateValidation(User user, HashMap<Integer, User> users) {
     /*    if (user.getEmail() == null) {
             log.debug("Ошибка валидации - электронная почта не может быть пустой");
@@ -52,7 +53,7 @@ public class UserValidation {
         }else   */
         HashMap<Integer, User> userss = new HashMap<>(users);
         userss.remove(user.getId());
-        for(Map.Entry<Integer, User> entry : userss.entrySet()){
+        for (Map.Entry<Integer, User> entry : userss.entrySet()) {
             User SavedUser = entry.getValue();
             if (SavedUser.getEmail().equals(user.getEmail())) {
                 log.debug("Ошибка - пользователь с таким Email уже существует.");

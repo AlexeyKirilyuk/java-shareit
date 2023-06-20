@@ -16,6 +16,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class UserController {
     private final UserStorage userStorage;
+
     @PostMapping
     public User createUser(@RequestBody User user) {
         userStorage.createUser(user);

@@ -8,7 +8,6 @@ import ru.practicum.shareit.exceptions.ConflictException;
 import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserStorage;
-import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
 import java.util.Map;
@@ -19,6 +18,7 @@ import java.util.Map;
 public class ItemController {
     private final ItemStorage itemStorage;
     private final UserStorage userStorage;
+
     @PostMapping
     public Item createItem(@RequestBody Item item, @RequestHeader("X-Sharer-User-Id") int ownerId) {
         itemStorage.createItem(item, ownerId);

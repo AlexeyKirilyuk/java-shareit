@@ -13,6 +13,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class BookingController {
     private final BookingStorage bookingStorage;
+
     @PostMapping
     public Booking createBooking(@RequestBody Booking booking) {
         bookingStorage.createBooking(booking);

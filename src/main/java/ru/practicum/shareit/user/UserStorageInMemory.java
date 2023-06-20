@@ -33,9 +33,9 @@ public class UserStorageInMemory implements UserStorage {
         if (userValidation.userUpdateValidation(user, users)) {
             if (users.containsKey(user.getId())) {
                 int id = user.getId();
-                if (user.getEmail() == null){
+                if (user.getEmail() == null) {
                     user.setEmail(users.get(id).getEmail());
-                } else  if (user.getName() == null){
+                } else if (user.getName() == null) {
                     user.setName(users.get(id).getName());
                 }
                 users.remove(id);

@@ -3,9 +3,7 @@ package ru.practicum.shareit.booking.validation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.booking.Booking;
-import ru.practicum.shareit.exceptions.ValidationException;
 
-import java.util.Objects;
 /**
  * TODO Sprint add-bookings.
  */
