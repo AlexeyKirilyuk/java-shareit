@@ -40,8 +40,8 @@ public class UserValidation {
         HashMap<Integer, User> userss = new HashMap<>(users);
         userss.remove(user.getId());
         for (Map.Entry<Integer, User> entry : userss.entrySet()) {
-            User SavedUser = entry.getValue();
-            if (SavedUser.getEmail().equals(user.getEmail())) {
+            User savedUser = entry.getValue();
+            if (savedUser.getEmail().equals(user.getEmail())) {
                 log.debug("Ошибка - пользователь с таким Email уже существует.");
                 throw new ConflictException("Ошибка - пользователь с таким Email уже существует.");
             }
