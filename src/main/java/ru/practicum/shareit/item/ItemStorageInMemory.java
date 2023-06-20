@@ -7,8 +7,6 @@ import ru.practicum.shareit.exceptions.AlreadyExistException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.validation.ItemValidation;
 import ru.practicum.shareit.user.UserStorage;
-import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.validation.UserValidation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,11 +17,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ItemStorageInMemory implements ItemStorage {
     private final ItemValidation itemValidation;
+    private final UserStorage userStorage;
     protected int idItem = 0;
     protected final HashMap<Integer, Item> items = new HashMap<>();
 
-    public Item createItem(Item item) {
-        if (itemValidation.itemValidation(item)) {
+    public Item createItem(Item item, int ownerId) {
+        item.setOwner(userStorage.getUserById(ownerId));
+        if (itemValidation.itemCreateValidation(item, items)) {
             idItem++;
             item.setId(idItem);
             items.put(idItem, item);
@@ -32,10 +32,25 @@ public class ItemStorageInMemory implements ItemStorage {
         return item;
     }
 
-    public int updateItem(Item item) {
-        if (itemValidation.itemValidation(item)) {
+    public int updateItem(Item item, int ownerId) {
+        if (ownerId == items.get(item.getId()).getOwner().getId()) {
+            item.setOwner(userStorage.getUserById(ownerId));
+        } else {
+            log.debug("Ошибка - e вещи другой владелец.");
+            throw new AlreadyExistException("Ошибка - e вещи другой владелец.");
+        }
+        if (itemValidation.itemUpdateValidation(item, items)) {
             if (items.containsKey(item.getId())) {
                 int id = item.getId();
+                if (item.getName() == null) {
+                    item.setName(items.get(id).getName());
+                }
+                if (item.getDescription() == null) {
+                    item.setDescription(items.get(id).getDescription());
+                }
+                if (item.getAvailable() == null) {
+                    item.setAvailable(items.get(id).getAvailable());
+                }
                 items.remove(id);
                 items.put(id, item);
                 log.trace("Обновлены данные вещи " + item);
@@ -54,6 +69,27 @@ public class ItemStorageInMemory implements ItemStorage {
             log.debug("Ошибка - не найден такой id");
             throw new AlreadyExistException("Ошибка - не найден такой id");
         }
+    }
+
+    public List<Item> getItemByOwner(int ownerId) {
+        List<Item> list = new ArrayList<>(items.values());
+        list.removeIf(item -> item.getOwner().getId() != ownerId);
+        return list;
+    }
+
+    public List<Item> getItemByText(String text) {
+        List<Item> list = new ArrayList<>();
+        if(text.equals("")){
+            return list;
+        }
+        for (Item item : items.values()) {
+            if (item.getName().toLowerCase().contains(text.toLowerCase())
+                    || item.getDescription().toLowerCase().contains(text.toLowerCase())
+                    && item.getAvailable() == Boolean.TRUE) {
+                list.add(item);
+            }
+        }
+        return list;
     }
 
     public void deleteItemById(int id) {

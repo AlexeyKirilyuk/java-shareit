@@ -23,9 +23,8 @@ public class UserController {
     }
 
     @PatchMapping("/{id}")
-    public User updateUser(@PathVariable int id, @RequestBody User user) {
+    public User updateUser(@RequestBody User user, @PathVariable int id) {
         user.setId(id);
-        System.out.println("user = " + user);
         userStorage.updateUser(user);
         return user;
     }
