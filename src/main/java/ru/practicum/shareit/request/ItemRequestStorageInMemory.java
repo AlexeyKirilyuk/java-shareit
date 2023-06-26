@@ -12,9 +12,9 @@ import java.util.HashMap;
 @Component("ItemRequestStorageInMemory")
 @RequiredArgsConstructor
 public class ItemRequestStorageInMemory implements ItemRequestStorage {
+    protected final HashMap<Integer, ItemRequest> itemRequests = new HashMap<>();
     private final ItemRequestValidation itemRequestValidation;
     protected int idItemRequest = 0;
-    protected final HashMap<Integer, ItemRequest> itemRequests = new HashMap<>();
 
     public ItemRequest createItemRequest(ItemRequest itemRequest) {
         if (itemRequestValidation.itemRequestValidation(itemRequest)) {

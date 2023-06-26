@@ -16,10 +16,10 @@ import java.util.List;
 @Component("ItemStorageInMemory")
 @RequiredArgsConstructor
 public class ItemStorageInMemory implements ItemStorage {
+    protected final HashMap<Integer, Item> items = new HashMap<>();
     private final ItemValidation itemValidation;
     private final UserStorage userStorage;
     protected int idItem = 0;
-    protected final HashMap<Integer, Item> items = new HashMap<>();
 
     public Item createItem(Item item, int ownerId) {
         item.setOwner(userStorage.getUserById(ownerId));
@@ -47,9 +47,9 @@ public class ItemStorageInMemory implements ItemStorage {
             items.put(id, item);
             log.trace("Обновлены данные вещи " + item);
         } else {
-                log.debug("Ошибка - вещь не найдена.");
-                throw new AlreadyExistException("Ошибка - вещь не найдена.");
-            }
+            log.debug("Ошибка - вещь не найдена.");
+            throw new AlreadyExistException("Ошибка - вещь не найдена.");
+        }
         return item;
     }
 

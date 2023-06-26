@@ -12,9 +12,9 @@ import java.util.HashMap;
 @Component("BookingStorageInMemory")
 @RequiredArgsConstructor
 public class BookingStorageInMemory implements BookingStorage {
+    protected final HashMap<Integer, Booking> bookings = new HashMap<>();
     private final BookingValidation bookingValidation;
     protected int idBooking = 0;
-    protected final HashMap<Integer, Booking> bookings = new HashMap<>();
 
     public Booking createBooking(Booking booking) {
         if (bookingValidation.bookingValidation(booking)) {

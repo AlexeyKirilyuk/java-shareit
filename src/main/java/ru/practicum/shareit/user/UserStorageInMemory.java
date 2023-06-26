@@ -15,9 +15,9 @@ import java.util.List;
 @Component("UserStorageInMemory")
 @RequiredArgsConstructor
 public class UserStorageInMemory implements UserStorage {
+    protected final HashMap<Integer, User> users = new HashMap<>();
     private final UserValidation userValidation;
     protected int idUser = 0;
-    protected final HashMap<Integer, User> users = new HashMap<>();
 
     public User createUser(User user) {
         idUser++;

@@ -4,11 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.ValidationException;
-import ru.practicum.shareit.item.dto.Item;
-import ru.practicum.shareit.item.dto.ItemMapper;
+import ru.practicum.shareit.user.dto.User;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
-import ru.practicum.shareit.user.dto.User;
 import ru.practicum.shareit.validation.UserValidation;
 
 import java.util.List;
