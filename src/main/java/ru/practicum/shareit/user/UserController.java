@@ -7,7 +7,7 @@ import ru.practicum.shareit.exceptions.AlreadyExistException;
 import ru.practicum.shareit.exceptions.ConflictException;
 import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.dto.User;
 
 import java.util.List;
 import java.util.Map;
@@ -19,13 +19,13 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public UserDto createUser(@RequestBody User user) {
-        return userService.createUser(user);
+    public UserDto createUser(@RequestBody UserDto userDto) {
+        return userService.createUser(userDto);
     }
 
     @PatchMapping("/{id}")
-    public UserDto updateUser(@RequestBody User user, @PathVariable int id) {
-        return userService.updateUser(id, user);
+    public UserDto updateUser(@RequestBody UserDto userDto, @PathVariable int id) {
+        return userService.updateUser(id, userDto);
     }
 
     @GetMapping("/{id}")

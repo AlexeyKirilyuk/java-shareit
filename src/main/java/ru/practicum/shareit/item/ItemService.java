@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
-import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.dto.Item;
 import ru.practicum.shareit.item.validation.ItemValidation;
 
 import java.util.List;
@@ -19,7 +19,8 @@ public class ItemService {
     private final ItemStorage itemStorage;
     private final ItemValidation itemValidation;
 
-    public ItemDto createItem(Item item, int ownerId) {
+    public ItemDto createItem(ItemDto itemDto, int ownerId) {
+        Item item = ItemMapper.toItem(itemDto);
         if (itemValidation.itemCreateValidation(item, ownerId, itemStorage.getItems())) {
             return ItemMapper.toItemDto(itemStorage.createItem(item, ownerId));
         }
@@ -27,7 +28,8 @@ public class ItemService {
         throw new ValidationException("Ошибка валидации");
     }
 
-    public ItemDto updateItem(int id, Item item, int ownerId) {
+    public ItemDto updateItem(int id, ItemDto itemDto, int ownerId) {
+        Item item = ItemMapper.toItem(itemDto);
         if (itemValidation.itemUpdateValidation(id, item, ownerId, itemStorage.getItems())) {
             return ItemMapper.toItemDto(itemStorage.updateItem(id, item, ownerId));
         }

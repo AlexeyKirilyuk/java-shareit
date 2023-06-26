@@ -7,7 +7,7 @@ import ru.practicum.shareit.exceptions.AlreadyExistException;
 import ru.practicum.shareit.exceptions.ConflictException;
 import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.dto.Item;
 
 import java.util.List;
 import java.util.Map;
@@ -19,13 +19,13 @@ public class ItemController {
     private final ItemService itemService;
 
     @PostMapping
-    public ItemDto createItem(@RequestBody Item item, @RequestHeader("X-Sharer-User-Id") int ownerId) {
-        return itemService.createItem(item, ownerId);
+    public ItemDto createItem(@RequestBody ItemDto itemDto, @RequestHeader("X-Sharer-User-Id") int ownerId) {
+        return itemService.createItem(itemDto, ownerId);
     }
 
     @PatchMapping("/{id}")
-    public ItemDto updateItem(@RequestBody Item item, @PathVariable int id, @RequestHeader("X-Sharer-User-Id") int ownerId) {
-        return itemService.updateItem(id, item, ownerId);
+    public ItemDto updateItem(@RequestBody ItemDto itemDto, @PathVariable int id, @RequestHeader("X-Sharer-User-Id") int ownerId) {
+        return itemService.updateItem(id, itemDto, ownerId);
     }
 
     @GetMapping("/{id}")

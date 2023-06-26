@@ -1,10 +1,12 @@
-package ru.practicum.shareit.item.model;
+package ru.practicum.shareit.item.dto;
 
+import lombok.Builder;
 import lombok.Data;
 import ru.practicum.shareit.request.ItemRequest;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.dto.User;
 
 @Data
+@Builder
 public class Item {
     private int id;                 // — уникальный идентификатор вещи;
     private String name;            // — краткое название;
