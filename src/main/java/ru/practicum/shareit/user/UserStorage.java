@@ -8,7 +8,7 @@ import java.util.List;
 public interface UserStorage {
     public User createUser(User user);
 
-    public int updateUser(User user);
+    public User updateUser(int id, User user);
 
     public User getUserById(int id);
 

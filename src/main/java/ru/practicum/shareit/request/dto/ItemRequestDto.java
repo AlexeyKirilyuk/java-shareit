@@ -7,5 +7,5 @@ import lombok.Data;
 @Data
 @Builder
 public class ItemRequestDto {
-    String description;         // — текст запроса, содержащий описание требуемой вещи;
+    private String description;         // — текст запроса, содержащий описание требуемой вещи;
 }

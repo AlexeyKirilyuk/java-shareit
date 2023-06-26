@@ -36,9 +36,9 @@ public class UserValidation {
         return true;
     }
 
-    public boolean userUpdateValidation(User user, HashMap<Integer, User> users) {
+    public boolean userUpdateValidation(int id, User user, HashMap<Integer, User> users) {
         HashMap<Integer, User> userss = new HashMap<>(users);
-        userss.remove(user.getId());
+        userss.remove(id);
         for (Map.Entry<Integer, User> entry : userss.entrySet()) {
             User savedUser = entry.getValue();
             if (savedUser.getEmail().equals(user.getEmail())) {

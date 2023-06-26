@@ -23,43 +23,34 @@ public class ItemStorageInMemory implements ItemStorage {
 
     public Item createItem(Item item, int ownerId) {
         item.setOwner(userStorage.getUserById(ownerId));
-        if (itemValidation.itemCreateValidation(item, items)) {
-            idItem++;
-            item.setId(idItem);
-            items.put(idItem, item);
-            log.trace("Добавлена вещь " + item);
-        }
+        idItem++;
+        item.setId(idItem);
+        items.put(idItem, item);
+        log.trace("Добавлена вещь " + item);
         return item;
     }
 
-    public int updateItem(Item item, int ownerId) {
-        if (ownerId == items.get(item.getId()).getOwner().getId()) {
-            item.setOwner(userStorage.getUserById(ownerId));
+    public Item updateItem(int id, Item item, int ownerId) {
+        item.setId(id);
+        item.setOwner(userStorage.getUserById(ownerId));
+        if (items.containsKey(item.getId())) {
+            if (item.getName() == null) {
+                item.setName(items.get(id).getName());
+            }
+            if (item.getDescription() == null) {
+                item.setDescription(items.get(id).getDescription());
+            }
+            if (item.getAvailable() == null) {
+                item.setAvailable(items.get(id).getAvailable());
+            }
+            items.remove(id);
+            items.put(id, item);
+            log.trace("Обновлены данные вещи " + item);
         } else {
-            log.debug("Ошибка - e вещи другой владелец.");
-            throw new AlreadyExistException("Ошибка - e вещи другой владелец.");
-        }
-        if (itemValidation.itemUpdateValidation(item, items)) {
-            if (items.containsKey(item.getId())) {
-                int id = item.getId();
-                if (item.getName() == null) {
-                    item.setName(items.get(id).getName());
-                }
-                if (item.getDescription() == null) {
-                    item.setDescription(items.get(id).getDescription());
-                }
-                if (item.getAvailable() == null) {
-                    item.setAvailable(items.get(id).getAvailable());
-                }
-                items.remove(id);
-                items.put(id, item);
-                log.trace("Обновлены данные вещи " + item);
-            } else {
                 log.debug("Ошибка - вещь не найдена.");
                 throw new AlreadyExistException("Ошибка - вещь не найдена.");
             }
-        }
-        return item.getId();
+        return item;
     }
 
     public Item getItemById(int id) {
@@ -79,7 +70,7 @@ public class ItemStorageInMemory implements ItemStorage {
 
     public List<Item> getItemByText(String text) {
         List<Item> list = new ArrayList<>();
-        if (text.equals("")) {
+        if (text.isEmpty()) {
             return list;
         }
         for (Item item : items.values()) {
@@ -94,5 +85,13 @@ public class ItemStorageInMemory implements ItemStorage {
 
     public void deleteItemById(int id) {
         items.remove(id);
+    }
+
+    public HashMap<Integer, Item> getItems() {
+        return items;
+    }
+
+    public List<Item> getAllItem() {
+        return new ArrayList<>(items.values());
     }
 }

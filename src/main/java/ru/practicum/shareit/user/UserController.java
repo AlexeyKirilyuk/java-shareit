@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.exceptions.AlreadyExistException;
 import ru.practicum.shareit.exceptions.ConflictException;
 import ru.practicum.shareit.exceptions.ValidationException;
+import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
@@ -15,34 +16,31 @@ import java.util.Map;
 @RequestMapping(path = "/users")
 @RequiredArgsConstructor
 public class UserController {
-    private final UserStorage userStorage;
+    private final UserService userService;
 
     @PostMapping
-    public User createUser(@RequestBody User user) {
-        userStorage.createUser(user);
-        return user;
+    public UserDto createUser(@RequestBody User user) {
+        return userService.createUser(user);
     }
 
     @PatchMapping("/{id}")
-    public User updateUser(@RequestBody User user, @PathVariable int id) {
-        user.setId(id);
-        userStorage.updateUser(user);
-        return user;
+    public UserDto updateUser(@RequestBody User user, @PathVariable int id) {
+        return userService.updateUser(id, user);
     }
 
     @GetMapping("/{id}")
-    public User getUserById(@PathVariable int id) {
-        return userStorage.getUserById(id);
+    public UserDto getUserById(@PathVariable int id) {
+        return userService.getUserById(id);
     }
 
     @GetMapping
-    public List<User> getUserById() {
-        return userStorage.getAllUser();
+    public List<UserDto> getUserById() {
+        return userService.getAllUser();
     }
 
     @DeleteMapping(value = "/{id}")
     public void deleteUserById(@PathVariable int id) {
-        userStorage.deleteUserById(id);
+        userService.deleteUserById(id);
     }
 
     @ExceptionHandler

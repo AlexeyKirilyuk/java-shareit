@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.exceptions.AlreadyExistException;
 import ru.practicum.shareit.exceptions.ConflictException;
 import ru.practicum.shareit.exceptions.ValidationException;
+import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.UserStorage;
 
 import java.util.List;
 import java.util.Map;
@@ -16,40 +16,36 @@ import java.util.Map;
 @RequestMapping("/items")
 @RequiredArgsConstructor
 public class ItemController {
-    private final ItemStorage itemStorage;
-    private final UserStorage userStorage;
+    private final ItemService itemService;
 
     @PostMapping
-    public Item createItem(@RequestBody Item item, @RequestHeader("X-Sharer-User-Id") int ownerId) {
-        itemStorage.createItem(item, ownerId);
-        return item;
+    public ItemDto createItem(@RequestBody Item item, @RequestHeader("X-Sharer-User-Id") int ownerId) {
+        return itemService.createItem(item, ownerId);
     }
 
     @PatchMapping("/{id}")
-    public Item updateItem(@RequestBody Item item, @PathVariable int id, @RequestHeader("X-Sharer-User-Id") int ownerId) {
-        item.setId(id);
-        itemStorage.updateItem(item, ownerId);
-        return item;
+    public ItemDto updateItem(@RequestBody Item item, @PathVariable int id, @RequestHeader("X-Sharer-User-Id") int ownerId) {
+        return itemService.updateItem(id, item, ownerId);
     }
 
     @GetMapping("/{id}")
-    public Item getItemById(@PathVariable int id) {
-        return itemStorage.getItemById(id);
+    public ItemDto getItemById(@PathVariable int id) {
+        return itemService.getItemById(id);
     }
 
     @GetMapping
-    public List<Item> getItemByOwner(@RequestHeader("X-Sharer-User-Id") int ownerId) {
-        return itemStorage.getItemByOwner(ownerId);
+    public List<ItemDto> getItemByOwner(@RequestHeader("X-Sharer-User-Id") int ownerId) {
+        return itemService.getItemByOwner(ownerId);
     }
 
     @GetMapping("/search")
-    public List<Item> getItemByText(@RequestParam String text) {
-        return itemStorage.getItemByText(text);
+    public List<ItemDto> getItemByText(@RequestParam String text) {
+        return itemService.getItemByText(text);
     }
 
     @DeleteMapping(value = "/{id}")
     public void deleteItemById(@PathVariable int id) {
-        itemStorage.deleteItemById(id);
+        itemService.deleteItemById(id);
     }
 
     @ExceptionHandler

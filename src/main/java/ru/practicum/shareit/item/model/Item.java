@@ -6,10 +6,10 @@ import ru.practicum.shareit.user.model.User;
 
 @Data
 public class Item {
-    int id;                 // — уникальный идентификатор вещи;
-    String name;            // — краткое название;
-    String description;     // — развёрнутое описание;
-    Boolean available;      // — статус о том, доступна или нет вещь для аренды;
-    User owner;             // — владелец вещи;
-    ItemRequest request;    // — если вещь была создана по запросу другого пользователя, то в этом поле будет храниться ссылка на соответствующий запрос.
+    private int id;                 // — уникальный идентификатор вещи;
+    private String name;            // — краткое название;
+    private String description;     // — развёрнутое описание;
+    private Boolean available;      // — статус о том, доступна или нет вещь для аренды;
+    private User owner;             // — владелец вещи;
+    private ItemRequest request;    // — если вещь была создана по запросу другого пользователя, то в этом поле будет храниться ссылка на соответствующий запрос.
 }
