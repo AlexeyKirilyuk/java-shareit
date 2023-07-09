@@ -21,7 +21,7 @@ public class ShareItApp {
 
         AnnotationConfigWebApplicationContext applicationContext =
                 new AnnotationConfigWebApplicationContext();
-        applicationContext.scan("ru.practicum.shareit");
+        applicationContext.scan("ru.practicum");
         applicationContext.setServletContext(tomcatContext.getServletContext());
         applicationContext.refresh();
 

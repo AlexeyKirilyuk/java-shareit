@@ -18,7 +18,7 @@ import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories(basePackages = "ru.practicum.shareit")
+@EnableJpaRepositories(basePackages = "ru.practicum")
 @PropertySource(value = "classpath:application.properties")
 public class PersistenceConfig {
     private final Environment environment;
@@ -52,7 +52,7 @@ public class PersistenceConfig {
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource) {
         final LocalContainerEntityManagerFactoryBean emf = new LocalContainerEntityManagerFactoryBean();
         emf.setDataSource(dataSource);
-        emf.setPackagesToScan("ru.practicum.shareit");
+        emf.setPackagesToScan("ru.practicum");
 
         final HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         emf.setJpaVendorAdapter(vendorAdapter);
