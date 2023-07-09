@@ -1,16 +1,20 @@
 package ru.practicum.shareit.item.dto;
 
+import ru.practicum.shareit.user.dto.User;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ItemMapper {
-    public static ItemDto toItemDto(Item item) {
+    public static ItemDto toItemDto(Optional<Item>  item) {
         return new ItemDto(
-                item.getId(),
-                item.getName(),
-                item.getDescription(),
-                item.getAvailable(),
-                item.getRequest() != null ? item.getRequest().getId() : null
+                item.get().getId(),
+                item.get().getName(),
+                item.get().getDescription(),
+                item.get().getAvailable(),
+                item.get().getOwner() != null ? item.get().getOwner(): null,
+                item.get().getRequest() != null ? item.get().getRequest(): null
         );
     }
 
@@ -28,7 +32,8 @@ public class ItemMapper {
     public static List<ItemDto> toListItemDto(List<Item> listItem) {
         List<ItemDto> listItemDto = new ArrayList<>();
         for (Item item : listItem) {
-            listItemDto.add(toItemDto(item));
+            Optional<Item> itemOptional = Optional.of(item);
+            listItemDto.add(toItemDto(itemOptional));
         }
         return listItemDto;
     }

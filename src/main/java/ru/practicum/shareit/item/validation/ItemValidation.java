@@ -7,12 +7,13 @@ import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.item.dto.Item;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 @Slf4j
 @Component
 public class ItemValidation {
-    public boolean itemCreateValidation(Item item, int ownerId, HashMap<Integer, Item> items) {
+    public boolean itemCreateValidation(Item item, int ownerId, List<Item> items) {
         if (item.getName() == null || Objects.equals(item.getName(), "")) {
             log.debug("Ошибка валидации - краткое название не может быть пустым");
             throw new ValidationException("Ошибка валидации - краткое название не может быть пустым");
@@ -29,12 +30,12 @@ public class ItemValidation {
         return true;
     }
 
-    public boolean itemUpdateValidation(int id, Item item, int ownerId, HashMap<Integer, Item> items) {
+    public boolean itemUpdateValidation(int id, Item item, int ownerId, List<Item> items) {
         if (ownerId == 0) {
             String message = "Ошибка валидации - владелец вещи не может быть пустой";
             log.debug(message);
             throw new ValidationException(message);
-        } else if (ownerId != items.get(id).getOwner().getId()) {
+        } else if (ownerId != items.get(id).getOwner()) {
             log.debug("Ошибка - у вещи другой владелец.");
             throw new AlreadyExistException("Ошибка - у вещи другой владелец.");
         }

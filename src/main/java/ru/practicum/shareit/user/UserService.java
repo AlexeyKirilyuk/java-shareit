@@ -1,51 +1,17 @@
 package ru.practicum.shareit.user;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exceptions.ValidationException;
-import ru.practicum.shareit.user.dto.User;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.dto.UserMapper;
-import ru.practicum.shareit.validation.UserValidation;
 
 import java.util.List;
 
-@Slf4j
-@Service
-@RequiredArgsConstructor
-public class UserService {
+public interface UserService {
+    public UserDto createUser(UserDto userDto);
 
-    private final UserStorage userStorage;
-    private final UserValidation userValidation;
+    public UserDto updateUser(int id, UserDto userDto);
 
-    public UserDto createUser(UserDto userDto) {
-        User user = UserMapper.toUser(userDto);
-        if (userValidation.userCreateValidation(user, userStorage.getUsers())) {
-            return UserMapper.toUserDto(userStorage.createUser(user));
-        }
-        log.debug("Ошибка валидации");
-        throw new ValidationException("Ошибка валидации");
-    }
+    public UserDto getUserById(int id);
 
-    public UserDto updateUser(int id, UserDto userDto) {
-        User user = UserMapper.toUser(userDto);
-        if (userValidation.userUpdateValidation(id, user, userStorage.getUsers())) {
-            return UserMapper.toUserDto(userStorage.updateUser(id, user));
-        }
-        log.debug("Ошибка валидации");
-        throw new ValidationException("Ошибка валидации");
-    }
+    public void deleteUserById(int id);
 
-    public UserDto getUserById(int id) {
-        return UserMapper.toUserDto(userStorage.getUserById(id));
-    }
-
-    public void deleteUserById(int id) {
-        userStorage.deleteUserById(id);
-    }
-
-    public List<UserDto> getAllUser() {
-        return UserMapper.toListUserDto(userStorage.getAllUser());
-    }
+    public List<UserDto> getAllUser();
 }

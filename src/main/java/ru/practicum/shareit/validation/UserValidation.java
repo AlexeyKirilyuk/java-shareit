@@ -6,14 +6,12 @@ import ru.practicum.shareit.exceptions.ConflictException;
 import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.user.dto.User;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Slf4j
 @Component
 public class UserValidation {
-    public boolean userCreateValidation(User user, HashMap<Integer, User> users) {
+    public boolean userCreateValidation(User user, List<User> users) {
         if (user.getEmail() == null) {
             log.debug("Ошибка валидации - электронная почта не может быть пустой");
             throw new ValidationException("Ошибка валидации - электронная почта не может быть пустой");
@@ -25,8 +23,7 @@ public class UserValidation {
             throw new ValidationException("Ошибка валидации - электронная почта должна содержать символ @");
         } else if (user.getName() == null || Objects.equals(user.getName(), "")) {
             user.setName(user.getEmail());
-        } else for (Map.Entry<Integer, User> entry : users.entrySet()) {
-            User savedUser = entry.getValue();
+        } else for (User savedUser : users) {
             if (savedUser.getEmail().equals(user.getEmail())) {
                 log.debug("Ошибка - пользователь с таким Email уже существует.");
                 throw new ConflictException("Ошибка - пользователь с таким Email уже существует.");
@@ -36,11 +33,10 @@ public class UserValidation {
         return true;
     }
 
-    public boolean userUpdateValidation(int id, User user, HashMap<Integer, User> users) {
-        HashMap<Integer, User> userss = new HashMap<>(users);
+    public boolean userUpdateValidation(int id, User user, List<User> users) {
+        List<User> userss = new ArrayList<>(users);
         userss.remove(id);
-        for (Map.Entry<Integer, User> entry : userss.entrySet()) {
-            User savedUser = entry.getValue();
+        for (User savedUser : users) {
             if (savedUser.getEmail().equals(user.getEmail())) {
                 log.debug("Ошибка - пользователь с таким Email уже существует.");
                 throw new ConflictException("Ошибка - пользователь с таким Email уже существует.");

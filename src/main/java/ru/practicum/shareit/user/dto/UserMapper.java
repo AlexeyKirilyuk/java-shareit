@@ -2,14 +2,15 @@ package ru.practicum.shareit.user.dto;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class UserMapper {
 
-    public static UserDto toUserDto(User user) {
+    public static UserDto toUserDto(Optional<User> user) {
         return new UserDto(
-                user.getId(),
-                user.getName(),
-                user.getEmail()
+                user.get().getId(),
+                user.get().getName(),
+                user.get().getEmail()
         );
     }
 
@@ -24,7 +25,8 @@ public class UserMapper {
     public static List<UserDto> toListUserDto(List<User> listUser) {
         List<UserDto> listUserDto = new ArrayList<>();
         for (User user : listUser) {
-            listUserDto.add(toUserDto(user));
+            Optional<User> userOptional = Optional.of(user);
+            listUserDto.add(toUserDto(userOptional));
         }
         return listUserDto;
     }

@@ -10,5 +10,6 @@ public class ItemDto {
     private String name;            // — краткое название;
     private String description;     // — развёрнутое описание;
     private Boolean available;      // — статус о том, доступна или нет вещь для аренды;
+    private Integer owner;
     private Integer request;        // — если вещь была создана по запросу другого пользователя, то в этом поле будет храниться Id пользователя.
 }

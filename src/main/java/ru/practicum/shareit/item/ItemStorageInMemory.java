@@ -15,7 +15,8 @@ import java.util.List;
 @Slf4j
 @Component("ItemStorageInMemory")
 @RequiredArgsConstructor
-public class ItemStorageInMemory implements ItemStorage {
+public class ItemStorageInMemory /*implements ItemStorage*/ {
+    /*
     protected final HashMap<Integer, Item> items = new HashMap<>();
     private final ItemValidation itemValidation;
     private final UserStorage userStorage;
@@ -94,4 +95,6 @@ public class ItemStorageInMemory implements ItemStorage {
     public List<Item> getAllItem() {
         return new ArrayList<>(items.values());
     }
+
+     */
 }
