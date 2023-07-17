@@ -9,11 +9,19 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
+
+/** пароль pgAdmin будет iamroot */
+
+
+
 @SpringBootApplication
 public class ShareItApp {
 
-       public static void main(String[] args) throws LifecycleException {
-        Tomcat tomcat = new Tomcat();
+ public static void main(String[] args) {
+  SpringApplication.run(ShareItApp.class, args);
+ }
+
+  /*      Tomcat tomcat = new Tomcat();
         tomcat.setSilent(true);
         tomcat.getConnector().setPort(8080);
 
@@ -32,6 +40,7 @@ public class ShareItApp {
         dispatcherWrapper.addMapping("/");
         dispatcherWrapper.setLoadOnStartup(1);
 
-        tomcat.start();
-    }
+        tomcat.start();*/
+
 }
+
