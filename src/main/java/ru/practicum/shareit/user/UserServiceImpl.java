@@ -9,7 +9,7 @@ import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.user.dto.User;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
-import ru.practicum.shareit.validation.UserValidation;
+import ru.practicum.shareit.user.validation.UserValidation;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;

@@ -1,4 +1,4 @@
-package ru.practicum.shareit.validation;
+package ru.practicum.shareit.user.validation;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -23,35 +23,12 @@ public class UserValidation {
               throw new ValidationException("Ошибка валидации - электронная почта должна содержать символ @");
           } else if (user.getName() == null || Objects.equals(user.getName(), "")) {
               user.setName(user.getEmail());
-          }/*
-      else for (User savedUser : users) {
-            if (savedUser.getEmail().equals(user.getEmail())) {
-                log.debug("Ошибка - пользователь с таким Email уже существует.");
-                throw new ConflictException("Ошибка - пользователь с таким Email уже существует.");
-            }
-
-
-        }
- */
+          }
         return true;
     }
 
     public boolean userUpdateValidation(long id, User user, List<User> users) {
-       /* List<User> userss = new ArrayList<>(users);
-        for (User savedUser : userss) {
-            if (savedUser.getId() == id) {
-                userss.remove(savedUser);
-                break;
-            }
-        }
-        for (User savedUser : userss) {
-            if (savedUser.getEmail().equals(user.getEmail())) {
-                log.debug("Ошибка - пользователь с таким Email уже существует.");
-                throw new ConflictException("Ошибка - пользователь с таким Email уже существует.");
-            }
-        }
 
-        */
         return true;
     }
 }
