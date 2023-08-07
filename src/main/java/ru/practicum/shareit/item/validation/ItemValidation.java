@@ -48,8 +48,8 @@ public class ItemValidation {
             throw new ValidationException(message);
         }
         for (Item savedItem : itemss) {
-            if (savedItem.getId() == id) {
-                if (savedItem.getOwner().getId() != ownerId) {
+            if (Objects.equals(savedItem.getId(), id)) {
+                if (!Objects.equals(savedItem.getOwner().getId(), ownerId)) {
                     log.debug("Ошибка - у вещи другой владелец.");
                     throw new AlreadyExistException("Ошибка - у вещи другой владелец.");
                 }
