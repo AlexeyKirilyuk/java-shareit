@@ -3,14 +3,7 @@ package ru.practicum.shareit.item;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.exceptions.AlreadyExistException;
-import ru.practicum.shareit.item.dto.Item;
-import ru.practicum.shareit.item.validation.ItemValidation;
-import ru.practicum.shareit.user.UserStorage;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 @Slf4j
 @Component("ItemStorageInMemory")

@@ -3,15 +3,12 @@ package ru.practicum.shareit.booking;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.booking.validation.BookingValidation;
-import ru.practicum.shareit.exceptions.AlreadyExistException;
-
-import java.util.HashMap;
 
 @Slf4j
 @Component("BookingStorageInMemory")
 @RequiredArgsConstructor
-public class BookingStorageInMemory implements BookingStorage {
+public class BookingStorageInMemory /*implements BookingStorage */ {
+    /*
     protected final HashMap<Integer, Booking> bookings = new HashMap<>();
     private final BookingValidation bookingValidation;
     protected int idBooking = 0;
@@ -53,4 +50,6 @@ public class BookingStorageInMemory implements BookingStorage {
     public void deleteBookingById(int id) {
         bookings.remove(id);
     }
+
+     */
 }

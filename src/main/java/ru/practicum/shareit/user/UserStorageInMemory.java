@@ -3,13 +3,6 @@ package ru.practicum.shareit.user;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.exceptions.AlreadyExistException;
-import ru.practicum.shareit.user.dto.User;
-import ru.practicum.shareit.validation.UserValidation;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 @Slf4j
 @Component("UserStorageInMemory")
