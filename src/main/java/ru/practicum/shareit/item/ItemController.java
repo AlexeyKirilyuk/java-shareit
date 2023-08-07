@@ -18,6 +18,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ItemController {
     private final ItemService itemService;
+
     @PostMapping
     public ItemDto createItem(@RequestBody ItemDto itemDto, @RequestHeader("X-Sharer-User-Id") int ownerId) {
         return itemService.createItem(itemDto, ownerId);

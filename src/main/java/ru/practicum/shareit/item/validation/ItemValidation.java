@@ -40,8 +40,8 @@ public class ItemValidation {
 
     }
 
-    public boolean itemUpdateValidation(Long id, Item item, Long ownerId, List<Item> Item) {
-        List<Item> itemss = new ArrayList<>(Item);
+    public boolean itemUpdateValidation(Long id, Item item, Long ownerId, List<Item> items) {
+        List<Item> itemss = new ArrayList<>(items);
         if (ownerId == 0) {
             String message = "Ошибка валидации - владелец вещи не может быть пустой";
             log.debug(message);

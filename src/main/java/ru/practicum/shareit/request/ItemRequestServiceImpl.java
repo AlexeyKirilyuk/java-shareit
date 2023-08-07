@@ -2,6 +2,7 @@ package ru.practicum.shareit.request;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.ObjectNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -91,6 +92,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     public void checkUserId(Long id) {
         Optional<User> user = userStorage.findById(id);
         if (user.isEmpty()) {
+            throw new AlreadyExistException("Пользователь с Id = " + id + " не найден");
         }
     }
 
