@@ -19,7 +19,6 @@ import ru.practicum.shareit.item.dto.Item;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.validation.ItemValidation;
-import ru.practicum.shareit.request.ItemRequestStorage;
 import ru.practicum.shareit.user.UserServiceImpl;
 import ru.practicum.shareit.user.UserStorage;
 import ru.practicum.shareit.user.dto.User;
