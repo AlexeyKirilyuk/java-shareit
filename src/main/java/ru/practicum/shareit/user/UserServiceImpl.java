@@ -21,10 +21,10 @@ import java.util.Optional;
 @Transactional(readOnly = false)
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    @PersistenceContext
-    private EntityManager entityManager;
     private final UserStorage userStorage;
     private final UserValidation userValidation;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     @Transactional

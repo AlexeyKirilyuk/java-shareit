@@ -150,24 +150,23 @@ public class BookingServiceImpl implements BookingService {
     }
 
     public User checkUser(Long userId) {
-        Optional<User> user = userStorage.findById(userId);
-        if (user.isPresent()) {
-            return user.get();
-        } else {
-            throw new AlreadyExistException("Пользователь с id = " + userId + " не найден");
-        }
+        return userStorage.findById(userId)
+                          .orElseThrow(() -> new AlreadyExistException("Пользователь с id = " + userId + " не найден"));
     }
 
     public void checkBooking(BookingDto booking) {
-        if (booking.getEnd().isBefore(LocalDateTime.now()))
+        if (booking.getEnd().isBefore(LocalDateTime.now())) {
             throw new ValidationException("Ошибка во времени бронирования: " +
                     "оно должно закончиться в будущем времени.");
-        else if (booking.getEnd().isBefore(booking.getStart()))
+        }
+        if (booking.getEnd().isBefore(booking.getStart())) {
             throw new ValidationException("Ошибка во времени бронирования: " +
                     "конец бронирования должен быть после его начала.");
-        else if (booking.getEnd().isEqual(booking.getStart()))
+        }
+        if (booking.getEnd().isEqual(booking.getStart())) {
             throw new ValidationException("Ошибка во времени бронирования: " +
                     "время начала не может совпадать с временем окончания. ");
+        }
     }
 
     public void checkPages(Integer fromElement, Integer size) {

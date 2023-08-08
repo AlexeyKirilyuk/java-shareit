@@ -14,10 +14,10 @@ import ru.practicum.shareit.item.ItemStorage;
 import ru.practicum.shareit.item.dto.Item;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
+import ru.practicum.shareit.request.dto.ItemRequest;
 import ru.practicum.shareit.request.dto.ItemRequestDtoInput;
 import ru.practicum.shareit.request.dto.ItemRequestFullDto;
 import ru.practicum.shareit.request.dto.ItemRequestMapper;
-import ru.practicum.shareit.request.dto.ItemRequest;
 import ru.practicum.shareit.user.UserStorage;
 import ru.practicum.shareit.user.dto.User;
 
@@ -88,7 +88,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         return result;
     }
 
-    public void checkUserId(Long id) {
+    private void checkUserId(Long id) {
         Optional<User> user = userStorage.findById(id);
         if (user.isEmpty()) {
             throw new AlreadyExistException("Пользователь с Id = " + id + " не найден");

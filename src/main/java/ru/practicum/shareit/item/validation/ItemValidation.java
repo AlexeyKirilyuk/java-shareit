@@ -18,24 +18,28 @@ public class ItemValidation {
         if (item.getName() == null || Objects.equals(item.getName(), "")) {
             log.debug("Ошибка валидации - краткое название не может быть пустым");
             throw new ValidationException("Ошибка валидации - краткое название не может быть пустым");
-        } else if (item.getDescription() == null) {
+        }
+        if (item.getDescription() == null) {
             log.debug("Ошибка валидации - развёрнутое описание вещи не может быть пустым");
             throw new ValidationException("Ошибка валидации - развёрнутое описание вещи не может быть пустым");
-        } else if (ownerId == 0) {
+        }
+        if (ownerId == 0) {
             log.debug("Ошибка валидации - владелец вещи не может быть пустой");
             throw new ValidationException("Ошибка валидации - владелец вещи не может быть пустой");
-        } else if (item.getAvailable() == null) {
+        }
+        if (item.getAvailable() == null) {
             log.debug("Ошибка валидации - статус доступности вещи не может быть пустой");
             throw new ValidationException("Ошибка валидации - статус доступности вещи не может быть пустой");
-        } else for (UserDto userDb : listUser) {
-            System.out.println("userDb.getId() = " + userDb.getId() + " ownerId = " + ownerId);
-            if (userDb.getId() == ownerId) {
-                return true;
+        } else {
+            for (UserDto userDb : listUser) {
+                log.debug("userDb.getId() = " + userDb.getId() + " ownerId = " + ownerId);
+                if (userDb.getId() == ownerId) {
+                    return true;
+                }
             }
         }
-        String eMessage = "Ошибка валидации - владелец вещи не найден.";
-        log.debug(eMessage);
-        throw new AlreadyExistException(eMessage);
+        log.debug("Ошибка валидации - владелец вещи не найден.");
+        throw new AlreadyExistException("Ошибка валидации - владелец вещи не найден.");
 
 
     }
@@ -43,9 +47,8 @@ public class ItemValidation {
     public boolean itemUpdateValidation(Long id, Item item, Long ownerId, List<Item> items) {
         List<Item> itemss = new ArrayList<>(items);
         if (ownerId == 0) {
-            String message = "Ошибка валидации - владелец вещи не может быть пустой";
-            log.debug(message);
-            throw new ValidationException(message);
+            log.debug("Ошибка валидации - владелец вещи не может быть пустой");
+            throw new ValidationException("Ошибка валидации - владелец вещи не может быть пустой");
         }
         for (Item savedItem : itemss) {
             if (Objects.equals(savedItem.getId(), id)) {

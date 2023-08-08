@@ -9,10 +9,10 @@ import ru.practicum.shareit.booking.dto.Booking;
 import ru.practicum.shareit.booking.dto.BookingItemDto;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.dto.BookingStatus;
+import ru.practicum.shareit.comments.CommentStorage;
+import ru.practicum.shareit.comments.dto.Comment;
 import ru.practicum.shareit.comments.dto.CommentDto;
 import ru.practicum.shareit.comments.dto.CommentMapper;
-import ru.practicum.shareit.comments.dto.Comment;
-import ru.practicum.shareit.comments.CommentStorage;
 import ru.practicum.shareit.exceptions.AlreadyExistException;
 import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.item.dto.Item;
@@ -42,8 +42,6 @@ public class ItemServiceImpl implements ItemService {
     private final CommentStorage commentStorage;
 
     private final BookingStorage bookingStorage;
-
-    private final ItemRequestStorage itemRequestStorage;
 
     @Override
     @Transactional
@@ -80,13 +78,6 @@ public class ItemServiceImpl implements ItemService {
             if (item.getAvailable() != null) {
                 itemDb.setAvailable(item.getAvailable());
             }
-/*            if (item.getOwner() != null){
-                itemDb.setOwner(item.getOwner());
-            }
-            if (item.getRequest() != null){
-                itemDb.setRequest(item.getRequest());
-            }
- */
             Optional<Item> itemOptional = Optional.of(itemStorage.save(itemDb));
             return ItemMapper.toItemDto(itemOptional.get());
         }
@@ -96,15 +87,12 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto getItemById(Long userId, Long itemId) {
-
-        System.out.println("ИТЕМ СЕРВИС - Вызов метода getItemById с itemId = " + itemId + ", userId = " + userId + " ");
         try {
             Item item = checkItem(itemId);
             return addBookingAndComment(item, userId);
         } catch (NoSuchElementException e) {
-            String eMessage = "Ошибка - Значение отсутствует.";
-            log.debug(eMessage);
-            throw new AlreadyExistException(eMessage);
+            log.debug("Ошибка - Значение отсутствует.");
+            throw new AlreadyExistException("Ошибка - Значение отсутствует.");
         }
     }
 
@@ -202,7 +190,7 @@ public class ItemServiceImpl implements ItemService {
         return ItemMapper.toItemDtoAll(item, last, next, comments);
     }
 
-    public User checkUser(Long userId) {
+    private User checkUser(Long userId) {
         log.trace("Вызов метода checkUser с userId = {}", userId);
         Optional<User> user = userStorage.findById(userId);
         if (user.isPresent()) {
@@ -212,7 +200,7 @@ public class ItemServiceImpl implements ItemService {
         }
     }
 
-    public Item checkItem(Long itemId) {
+    private Item checkItem(Long itemId) {
         log.trace("Вызов метода checkItem с itemId = {}", itemId);
         Optional<Item> item = itemStorage.findById(itemId);
         if (item.isPresent()) {

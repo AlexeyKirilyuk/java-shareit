@@ -33,19 +33,19 @@ public class BookingController {
 
     @GetMapping("/{bookingId}")
     public BookingUserDto getBookingById(@PathVariable Long bookingId, @RequestHeader("X-Sharer-User-Id") Long userId) {
-    return bookingService.getBookingById(bookingId, userId);
+        return bookingService.getBookingById(bookingId, userId);
     }
 
     @GetMapping
     public List<BookingUserDto> getAllBookerBookings(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestParam(defaultValue = "ALL") String state,
-    @Min(0) @RequestParam(defaultValue = "0") Integer from, @Min(1) @RequestParam(defaultValue = "20") Integer size) {
+                                                     @Min(0) @RequestParam(defaultValue = "0") Integer from, @Min(1) @RequestParam(defaultValue = "20") Integer size) {
         return bookingService.getAllBookerBookings(userId, state, from, size);
     }
 
     @GetMapping("/owner")
     public List<BookingUserDto> getAllOwnerBookings(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestParam(defaultValue = "ALL") String state,
-    @Min(0) @RequestParam(defaultValue = "0") Integer from, @Min(1) @RequestParam(defaultValue = "20") Integer size) {
-    return bookingService.getAllOwnerBookings(userId, state, from, size);
+                                                    @Min(0) @RequestParam(defaultValue = "0") Integer from, @Min(1) @RequestParam(defaultValue = "20") Integer size) {
+        return bookingService.getAllOwnerBookings(userId, state, from, size);
     }
 
     @ExceptionHandler

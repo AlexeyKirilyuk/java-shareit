@@ -12,18 +12,18 @@ import java.util.Objects;
 @Component
 public class UserValidation {
     public boolean userCreateValidation(User user, List<User> users) {
-          if (user.getEmail() == null) {
-              log.debug("Ошибка валидации - электронная почта не может быть пустой");
-              throw new ValidationException("Ошибка валидации - электронная почта не может быть пустой");
-          } else if (user.getEmail().isEmpty()) {
-              log.debug("Ошибка валидации - электронная почта не может быть пустой");
-              throw new ValidationException("Ошибка валидации - электронная почта не может быть пустой");
-          } else if (!user.getEmail().contains("@")) {
-              log.debug("Ошибка валидации - электронная почта должна содержать символ @");
-              throw new ValidationException("Ошибка валидации - электронная почта должна содержать символ @");
-          } else if (user.getName() == null || Objects.equals(user.getName(), "")) {
-              user.setName(user.getEmail());
-          }
+        if (user.getEmail() == null) {
+            log.debug("Ошибка валидации - электронная почта не может быть пустой");
+            throw new ValidationException("Ошибка валидации - электронная почта не может быть пустой");
+        } else if (user.getEmail().isEmpty()) {
+            log.debug("Ошибка валидации - электронная почта не может быть пустой");
+            throw new ValidationException("Ошибка валидации - электронная почта не может быть пустой");
+        } else if (!user.getEmail().contains("@")) {
+            log.debug("Ошибка валидации - электронная почта должна содержать символ @");
+            throw new ValidationException("Ошибка валидации - электронная почта должна содержать символ @");
+        } else if (user.getName() == null || Objects.equals(user.getName(), "")) {
+            user.setName(user.getEmail());
+        }
         return true;
     }
 

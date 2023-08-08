@@ -1,18 +1,15 @@
 package ru.practicum.shareit.item.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ru.practicum.shareit.request.dto.ItemRequest;
 import ru.practicum.shareit.user.dto.User;
 
 import javax.persistence.*;
 
-
-@Data
-@Builder
 @Entity
+@Builder
+@Getter
+@Setter
 @Table(name = "ITEMS")
 @AllArgsConstructor
 @NoArgsConstructor
