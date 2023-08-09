@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingState;
 import ru.practicum.shareit.booking.dto.BookingUserDto;
 import ru.practicum.shareit.exceptions.AlreadyExistException;
 import ru.practicum.shareit.exceptions.IncorrectParameterException;
@@ -37,13 +38,13 @@ public class BookingController {
     }
 
     @GetMapping
-    public List<BookingUserDto> getAllBookerBookings(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestParam(defaultValue = "ALL") String state,
+    public List<BookingUserDto> getAllBookerBookings(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestParam(defaultValue = "ALL") BookingState state,
                                                      @Min(0) @RequestParam(defaultValue = "0") Integer from, @Min(1) @RequestParam(defaultValue = "20") Integer size) {
         return bookingService.getAllBookerBookings(userId, state, from, size);
     }
 
     @GetMapping("/owner")
-    public List<BookingUserDto> getAllOwnerBookings(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestParam(defaultValue = "ALL") String state,
+    public List<BookingUserDto> getAllOwnerBookings(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestParam(defaultValue = "ALL") BookingState state,
                                                     @Min(0) @RequestParam(defaultValue = "0") Integer from, @Min(1) @RequestParam(defaultValue = "20") Integer size) {
         return bookingService.getAllOwnerBookings(userId, state, from, size);
     }

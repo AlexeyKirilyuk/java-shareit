@@ -18,7 +18,6 @@ import java.util.Optional;
 
 @Slf4j
 @Service
-@Transactional(readOnly = false)
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserStorage userStorage;

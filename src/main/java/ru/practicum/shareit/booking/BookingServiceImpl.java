@@ -23,7 +23,6 @@ import java.util.Optional;
 
 @Slf4j
 @Service
-@Transactional(readOnly = false)
 @RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
     private final BookingStorage bookingStorage;
@@ -75,15 +74,14 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<BookingUserDto> getAllOwnerBookings(Long ownerId, String state, Integer fromElement, Integer size) {
+    public List<BookingUserDto> getAllOwnerBookings(Long ownerId, BookingState state, Integer fromElement, Integer size) {
         checkUser(ownerId);
         List<Booking> result;
         checkPages(fromElement, size);
         int fromPage = fromElement / size;
         Pageable pageable = PageRequest.of(fromPage, size);
         try {
-            BookingState status = BookingState.valueOf(state);
-            switch (status) {
+            switch (state) {
                 case ALL:
                     result = bookingStorage.findAllByItemOwnerIdOrderByStartDesc(ownerId, pageable);
                     break;
@@ -103,48 +101,48 @@ public class BookingServiceImpl implements BookingService {
                     result = bookingStorage.findAllByItemOwnerIdAndStatusOrderByStartDesc(ownerId, BookingStatus.REJECTED, pageable);
                     break;
                 default:
-                    throw new IncorrectParameterException(state);
+                    throw new IncorrectParameterException(String.valueOf((state)));
             }
             return BookingMapper.fromListBooking(result);
         } catch (Exception e) {
-            throw new IncorrectParameterException(state);
+            throw new IncorrectParameterException(String.valueOf((state)));
         }
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<BookingUserDto> getAllBookerBookings(Long bookerId, String state, Integer fromElement, Integer size) {
+    public List<BookingUserDto> getAllBookerBookings(Long bookerId, BookingState state, Integer fromElement, Integer size) {
         checkUser(bookerId);
         List<Booking> result;
         checkPages(fromElement, size);
         int fromPage = fromElement / size;
         Pageable pageable = PageRequest.of(fromPage, size);
-        switch (state.toUpperCase()) {
-            case "ALL":
+        switch (state) {
+            case ALL:
                 result = bookingStorage.findAllByBookerIdOrderByStartDesc(bookerId, pageable);
                 break;
-            case "PAST":
+            case PAST:
                 result = bookingStorage.findAllByBookerIdAndEndBeforeOrderByStartDesc(
                         bookerId, LocalDateTime.now(), pageable);
                 break;
-            case "FUTURE":
+            case FUTURE:
                 result = bookingStorage.findAllByBookerIdAndStartAfterOrderByStartDesc(
                         bookerId, LocalDateTime.now(), pageable);
                 break;
-            case "CURRENT":
+            case CURRENT:
                 result = bookingStorage.findAllByBookerIdAndStartBeforeAndEndAfterOrderByStartDesc(
                         bookerId, LocalDateTime.now(), LocalDateTime.now(), pageable);
                 break;
-            case "WAITING":
+            case WAITING:
                 result = bookingStorage.findAllByBookerIdAndStatusOrderByStartDesc(
                         bookerId, BookingStatus.WAITING, pageable);
                 break;
-            case "REJECTED":
+            case REJECTED:
                 result = bookingStorage.findAllByBookerIdAndStatusOrderByStartDesc(
                         bookerId, BookingStatus.REJECTED, pageable);
                 break;
             default:
-                throw new IncorrectParameterException(String.format("Unknown state: %s", state.toUpperCase()));
+                throw new IncorrectParameterException(String.format("Unknown state: %s", state));
         }
         return BookingMapper.fromListBooking(result);
     }

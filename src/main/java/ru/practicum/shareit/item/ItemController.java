@@ -26,14 +26,11 @@ public class ItemController {
 
     @PatchMapping("/{id}")
     public ItemDto updateItem(@RequestBody ItemDto itemDto, @PathVariable Long id, @RequestHeader("X-Sharer-User-Id") Long ownerId) {
-        ItemDto i = itemService.updateItem(id, itemDto, ownerId);
-        System.out.println("ItemDto updateItem = " + i);
-        return i;
+        return itemService.updateItem(id, itemDto, ownerId);
     }
 
     @GetMapping("/{id}")
     public ItemDto getItemById(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long id) {
-        System.out.println("КОНТРОЛЛЕР - Вызов метода getItemById с itemId = " + id + ", userId = " + userId + " ");
         return itemService.getItemById(userId, id);
     }
 
