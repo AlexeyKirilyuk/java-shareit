@@ -66,6 +66,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = false)
     public void deleteUserById(long id) {
         Optional<User> userDb = userStorage.findById(Long.valueOf(id));
         if (userDb.isPresent()) {

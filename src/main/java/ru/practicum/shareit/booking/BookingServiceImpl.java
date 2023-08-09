@@ -74,14 +74,15 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<BookingUserDto> getAllOwnerBookings(Long ownerId, BookingState state, Integer fromElement, Integer size) {
+    public List<BookingUserDto> getAllOwnerBookings(Long ownerId, String state, Integer fromElement, Integer size) {
         checkUser(ownerId);
         List<Booking> result;
         checkPages(fromElement, size);
         int fromPage = fromElement / size;
         Pageable pageable = PageRequest.of(fromPage, size);
         try {
-            switch (state) {
+            BookingState status = BookingState.valueOf(state);
+            switch (status) {
                 case ALL:
                     result = bookingStorage.findAllByItemOwnerIdOrderByStartDesc(ownerId, pageable);
                     break;
@@ -101,23 +102,25 @@ public class BookingServiceImpl implements BookingService {
                     result = bookingStorage.findAllByItemOwnerIdAndStatusOrderByStartDesc(ownerId, BookingStatus.REJECTED, pageable);
                     break;
                 default:
-                    throw new IncorrectParameterException(String.valueOf((state)));
+                    throw new IncorrectParameterException(state);
             }
             return BookingMapper.fromListBooking(result);
         } catch (Exception e) {
-            throw new IncorrectParameterException(String.valueOf((state)));
+            throw new IncorrectParameterException(state);
         }
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<BookingUserDto> getAllBookerBookings(Long bookerId, BookingState state, Integer fromElement, Integer size) {
+    public List<BookingUserDto> getAllBookerBookings(Long bookerId, String state, Integer fromElement, Integer size) {
         checkUser(bookerId);
         List<Booking> result;
         checkPages(fromElement, size);
         int fromPage = fromElement / size;
         Pageable pageable = PageRequest.of(fromPage, size);
-        switch (state) {
+        try {
+        BookingState status = BookingState.valueOf(state);
+        switch (status) {
             case ALL:
                 result = bookingStorage.findAllByBookerIdOrderByStartDesc(bookerId, pageable);
                 break;
@@ -142,9 +145,12 @@ public class BookingServiceImpl implements BookingService {
                         bookerId, BookingStatus.REJECTED, pageable);
                 break;
             default:
-                throw new IncorrectParameterException(String.format("Unknown state: %s", state));
+                throw new IncorrectParameterException(String.format("Unknown state: %s", state.toUpperCase()));
         }
         return BookingMapper.fromListBooking(result);
+        } catch (Exception e) {
+            throw new IncorrectParameterException(String.format("Unknown state: %s", state.toUpperCase()));
+        }
     }
 
     public User checkUser(Long userId) {
