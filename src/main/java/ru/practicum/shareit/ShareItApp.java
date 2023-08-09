@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * пароль pgAdmin будет iamroot
- */
+*/
 @Slf4j
 @SpringBootApplication
 public class ShareItApp {
