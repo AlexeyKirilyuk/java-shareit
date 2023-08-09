@@ -7,9 +7,12 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
-public class BookingDto {
-    private Long itemId;
-    private LocalDateTime start;
-    private LocalDateTime end;
+public class BookingItemDto {
+    private Long id;
 
+    private Long bookerId;
+
+    private LocalDateTime start;
+
+    private LocalDateTime end;
 }

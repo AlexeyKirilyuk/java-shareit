@@ -1,59 +1,24 @@
 package ru.practicum.shareit.item;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exceptions.ValidationException;
-import ru.practicum.shareit.item.dto.Item;
+import ru.practicum.shareit.comments.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemMapper;
-import ru.practicum.shareit.item.validation.ItemValidation;
 
 import java.util.List;
 
-@Slf4j
-@Service
-@RequiredArgsConstructor
-public class ItemService {
+interface ItemService {
+    ItemDto createItem(ItemDto itemDto, int ownerId);
 
-    private final ItemStorage itemStorage;
-    private final ItemValidation itemValidation;
+    ItemDto updateItem(Long id, ItemDto itemDto, Long ownerId);
 
-    public ItemDto createItem(ItemDto itemDto, int ownerId) {
-        Item item = ItemMapper.toItem(itemDto);
-        if (itemValidation.itemCreateValidation(item, ownerId, itemStorage.getItems())) {
-            return ItemMapper.toItemDto(itemStorage.createItem(item, ownerId));
-        }
-        log.debug("Ошибка валидации");
-        throw new ValidationException("Ошибка валидации");
-    }
+    ItemDto getItemById(Long userId, Long itemId);
 
-    public ItemDto updateItem(int id, ItemDto itemDto, int ownerId) {
-        Item item = ItemMapper.toItem(itemDto);
-        if (itemValidation.itemUpdateValidation(id, item, ownerId, itemStorage.getItems())) {
-            return ItemMapper.toItemDto(itemStorage.updateItem(id, item, ownerId));
-        }
-        log.debug("Ошибка валидации");
-        throw new ValidationException("Ошибка валидации");
-    }
+    void deleteItemById(Long id);
 
-    public ItemDto getItemById(int id) {
-        return ItemMapper.toItemDto(itemStorage.getItemById(id));
-    }
+    List<ItemDto> getAllItem();
 
-    public void deleteItemById(int id) {
-        itemStorage.deleteItemById(id);
-    }
+    List<ItemDto> getItemByOwner(Long ownerId);
 
-    public List<ItemDto> getAllItem() {
-        return ItemMapper.toListItemDto(itemStorage.getAllItem());
-    }
+    List<ItemDto> getItemByText(String text);
 
-    public List<ItemDto> getItemByOwner(int ownerId) {
-        return ItemMapper.toListItemDto(itemStorage.getItemByOwner(ownerId));
-    }
-
-    public List<ItemDto> getItemByText(String text) {
-        return ItemMapper.toListItemDto(itemStorage.getItemByText(text));
-    }
+    CommentDto createComment(CommentDto comment, Long userId, Long itemId);
 }

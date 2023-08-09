@@ -1,12 +1,15 @@
 package ru.practicum.shareit.request;
 
-public interface ItemRequestStorage {
-    public ItemRequest createItemRequest(ItemRequest itemRequest);
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import ru.practicum.shareit.request.dto.ItemRequest;
 
-    public int updateItemRequest(ItemRequest itemRequest);
+import java.util.List;
 
-    public ItemRequest getItemRequestById(int id);
+public interface ItemRequestStorage extends JpaRepository<ItemRequest, Long> {
+    List<ItemRequest> findAllByRequestor_Id(Long requestorId);
 
-    public void deleteItemRequestById(int id);
+    Page<ItemRequest> findAllByRequestor_IdNot(Long requesterId, Pageable pageable);
 
 }

@@ -1,12 +1,30 @@
 package ru.practicum.shareit.user.dto;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
-@Data
+import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+
+@Getter
+@Setter
 @Builder
+@Entity
+@Table(name = "USERS")
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
-    private int id;                 // — уникальный идентификатор пользователя;
-    private String name;            // — имя или логин пользователя;
-    private String email;           // — адрес электронной почты (учтите, что два пользователя не могут иметь одинаковый адрес электронной почты).
+
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
+
+    @NotEmpty
+    @Column(name = "name")
+    private String name;
+
+    @NotEmpty(message = "{validation.email.NotEmpty.message}")
+    @Column(name = "email", unique = true)
+    private String email;
 }
