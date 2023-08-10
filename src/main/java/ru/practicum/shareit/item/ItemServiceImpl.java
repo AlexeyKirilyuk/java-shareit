@@ -19,6 +19,7 @@ import ru.practicum.shareit.item.dto.Item;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.validation.ItemValidation;
+import ru.practicum.shareit.request.ItemRequestStorage;
 import ru.practicum.shareit.user.UserServiceImpl;
 import ru.practicum.shareit.user.UserStorage;
 import ru.practicum.shareit.user.dto.User;
@@ -35,6 +36,7 @@ public class ItemServiceImpl implements ItemService {
     private final ItemStorage itemStorage;
     private final ItemValidation itemValidation;
     private final UserStorage userStorage;
+    private final ItemRequestStorage itemRequestStorage;
     private final UserServiceImpl userService;
 
     private final CommentStorage commentStorage;
@@ -46,10 +48,16 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto createItem(ItemDto itemDto, int ownerId) {
 
         Item item = ItemMapper.toItem(itemDto);
+
         userService.getAllUser();
         if (itemValidation.itemCreateValidation(item, ownerId, itemStorage.findAll(), userService.getAllUser())) {
             User user = checkUser((long) ownerId);
             item.setOwner(user);
+            Long itemRequestId = itemDto.getRequestId();
+            if (itemRequestId != null) {
+                item.setRequest(itemRequestStorage.findById(itemRequestId)
+                    .orElseThrow(() ->new AlreadyExistException("Запрос с Id = " + itemRequestId + " не найден")));
+            }
             Optional<Item> itemOptional = Optional.of(itemStorage.save(item));
             return ItemMapper.toItemDto(itemOptional.get());
         }
