@@ -42,22 +42,27 @@ public class UserServiceImpl implements UserService {
     public UserDto updateUser(long id, UserDto userDto) {
         User user = UserMapper.toUser(userDto);
         user.setId(id);
-        User userDb = userStorage.findById(id).get();
+        Optional<User> userDbOptional = userStorage.findById(id);
+        if (userDbOptional.isEmpty()) {
+            throw new AlreadyExistException("Пользователь с id = " + id + " не найден");
+        } else {
+            User userDb = userDbOptional.get();
+            if (userValidation.userUpdateValidation(id, user, userStorage.findAll())) {
+                if (user.getName() != null) {
+                    userDb.setName(user.getName());
+                }
+                if (user.getEmail() != null) {
+                    userDb.setEmail(user.getEmail());
+                }
 
-
-        if (userValidation.userUpdateValidation(id, user, userStorage.findAll())) {  //* to do
-            if (user.getName() != null) {
-                userDb.setName(user.getName());
+                Optional<User> userOptional = Optional.of(userStorage.save(userDb));
+                return UserMapper.toUserDto(userOptional);
+            } else {
+                log.debug("Ошибка валидации");
+                throw new ValidationException("Ошибка валидации");
             }
-            if (user.getEmail() != null) {
-                userDb.setEmail(user.getEmail());
-            }
-
-            Optional<User> userOptional = Optional.of(userStorage.save(userDb));
-            return UserMapper.toUserDto(userOptional);
         }
-        log.debug("Ошибка валидации");
-        throw new ValidationException("Ошибка валидации");
+
     }
 
     @Override
@@ -71,7 +76,7 @@ public class UserServiceImpl implements UserService {
         Optional<User> userDb = userStorage.findById(Long.valueOf(id));
         if (userDb.isPresent()) {
             userStorage.deleteById(id);
-            entityManager.flush();
+//            entityManager.flush();
         } else {
             log.debug("Ошибка NOT_FOUND");
             throw new AlreadyExistException("Ошибка NOT_FOUND");
