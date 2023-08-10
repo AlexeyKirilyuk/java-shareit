@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * пароль pgAdmin будет iamroot
+  * пароль pgAdmin будет iamroot
 */
 @Slf4j
 @SpringBootApplication
