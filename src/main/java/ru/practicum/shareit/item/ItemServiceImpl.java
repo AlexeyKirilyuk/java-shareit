@@ -38,9 +38,7 @@ public class ItemServiceImpl implements ItemService {
     private final UserStorage userStorage;
     private final ItemRequestStorage itemRequestStorage;
     private final UserServiceImpl userService;
-
     private final CommentStorage commentStorage;
-
     private final BookingStorage bookingStorage;
 
     @Override
@@ -56,7 +54,7 @@ public class ItemServiceImpl implements ItemService {
             Long itemRequestId = itemDto.getRequestId();
             if (itemRequestId != null) {
                 item.setRequest(itemRequestStorage.findById(itemRequestId)
-                    .orElseThrow(() ->new AlreadyExistException("Запрос с Id = " + itemRequestId + " не найден")));
+                    .orElseThrow(() -> new AlreadyExistException("Запрос с Id = " + itemRequestId + " не найден")));
             }
             Optional<Item> itemOptional = Optional.of(itemStorage.save(item));
             return ItemMapper.toItemDto(itemOptional.get());
