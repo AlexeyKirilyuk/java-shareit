@@ -64,7 +64,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     @Transactional(readOnly = true)
     public List<ItemRequestFullDto> getSort(Long userId, Integer from, Integer size) {
-        System.out.println("getSort(Long userId = " + userId + " Integer from = " + from +" Integer size = "+size);
         if (from % size != 0) {
             throw new IncorrectParameterException("Некорректный ввод страниц и размеров");
         }
@@ -72,17 +71,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         Page<ItemRequest> itemRequestPage = itemRequestRepository.findAllByRequestor_IdNot(userId, pageable);
         List<ItemRequest> itemRequests = itemRequestPage.getContent();
         List<ItemRequestFullDto> result = toItemRequestFullDtoResponse(itemRequests);
-        System.out.println(" List<ItemRequestFullDto> result = " + result);
         return result;
-      /*  [ItemRequestFullDto(
-    id=1,
-    description=Хотел бы воспользоваться щёткой для обуви,
-    requestor=ru.practicum.shareit.user.dto.User@51e09d37,
-    created=2023-08-10T20:08:36.081076,
-    items=[ItemDto(id=5, name=Щётка для обуви, description=Стандартная щётка для обуви, available=true, requestId=1, lastBooking=null, nextBooking=null, comments=null)])]
-
-
-       */
     }
 
     @Override

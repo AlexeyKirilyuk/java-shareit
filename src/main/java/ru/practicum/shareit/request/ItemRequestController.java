@@ -34,8 +34,8 @@ public class ItemRequestController {
 
     @GetMapping("/all")
     public List<ItemRequestFullDto> getUserRequests(@RequestHeader("X-Sharer-User-Id") long userId,
-     @PositiveOrZero @RequestParam(defaultValue = "0") Integer from, @Positive @RequestParam(defaultValue = "10") Integer size) {
-     return (itemRequestService.getSort(userId, from, size));
+    @PositiveOrZero @RequestParam(defaultValue = "0") Integer from, @Positive @RequestParam(defaultValue = "10") Integer size) {
+        return (itemRequestService.getSort(userId, from, size));
     }
 
     @GetMapping("/{requestId}")
