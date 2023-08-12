@@ -49,14 +49,14 @@ public class BookingController {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)                                                  //Status code is 400
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> validationException(final ValidationException e) {
         return Map.of("error", "Ошибка валидации",
                 "errorMessage", e.getMessage());
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)                                                     //Status code is 400
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> incorrectParameterException(final IncorrectParameterException e) {
         return Map.of("error", "Unknown state: UNSUPPORTED_STATUS",
                 "Error message", e.getMessage());

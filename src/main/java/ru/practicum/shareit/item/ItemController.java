@@ -16,59 +16,50 @@ import java.util.Map;
 @RestController
 @RequestMapping("/items")
 @RequiredArgsConstructor
-public class    ItemController {
+public class ItemController {
     private final ItemService itemService;
 
     @PostMapping
-    public ItemDto createItem(@RequestBody ItemDto itemDto, @RequestHeader("X-Sharer-User-Id") int ownerId) {
+    public ItemDto createItem(@RequestBody ItemDto itemDto, @RequestHeader("X-Sharer-User-Id") Long ownerId) {
         return itemService.createItem(itemDto, ownerId);
     }
-
     @PatchMapping("/{id}")
     public ItemDto updateItem(@RequestBody ItemDto itemDto, @PathVariable Long id, @RequestHeader("X-Sharer-User-Id") Long ownerId) {
         return itemService.updateItem(id, itemDto, ownerId);
     }
-
     @GetMapping("/{id}")
     public ItemDto getItemById(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long id) {
         return itemService.getItemById(userId, id);
     }
-
     @GetMapping
     public List<ItemDto> getItemByOwner(@RequestHeader("X-Sharer-User-Id") Long ownerId) {
         return itemService.getItemByOwner(ownerId);
     }
-
     @GetMapping("/search")
     public List<ItemDto> getItemByText(@RequestParam String text) {
         return itemService.getItemByText(text);
     }
-
     @DeleteMapping(value = "/{id}")
     public void deleteItemById(@PathVariable long id) {
         itemService.deleteItemById(id);
     }
-
     @PostMapping("/{itemId}/comment")
     public CommentDto newComment(@RequestBody @Valid CommentDto comment, @RequestHeader("X-Sharer-User-Id") Long userId,
                                  @PathVariable Long itemId) {
         return itemService.createComment(comment, userId, itemId);
     }
-
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)                                               //Status code is 400
     public Map<String, String> validationException(final ValidationException e) {
         return Map.of("error", "Ошибка валидации",
                 "errorMessage", e.getMessage());
     }
-
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)                                                 //Status code is 404
     public Map<String, String> alreadyExistException(final AlreadyExistException e) {
         return Map.of("error", "Ошибка",
                 "errorMessage", e.getMessage());
     }
-
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)                                                    //Status code is 409
     public Map<String, String> conflictException(final ConflictException e) {

@@ -2,26 +2,24 @@ package ru.practicum.shareit.booking.validation;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.booking.dto.Booking;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingStatus;
+import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.exceptions.AlreadyExistException;
 import ru.practicum.shareit.exceptions.ValidationException;
-import ru.practicum.shareit.item.ItemStorage;
-import ru.practicum.shareit.item.dto.Item;
+import ru.practicum.shareit.item.model.Item;
 
 import java.util.Optional;
 
 @Slf4j
 @Component
 public class BookingValidation {
-    public boolean bookingCreateValidation(Long userId, BookingDto bookingDto, ItemStorage itemStorage) {
+    public boolean bookingCreateValidation(Long userId, BookingDto bookingDto, Optional<Item> item) {
         if (bookingDto.getItemId() == null) {
             String e = "Предмет с id = " + bookingDto.getItemId() + " не найден";
             log.debug(e);
             throw new AlreadyExistException(e);
         }
-        Optional<Item> item = itemStorage.findById(bookingDto.getItemId());
         if (item.isEmpty()) {
             String e = "Предмет с id = " + bookingDto.getItemId() + " не найден(isEmpty)";
             log.debug(e);

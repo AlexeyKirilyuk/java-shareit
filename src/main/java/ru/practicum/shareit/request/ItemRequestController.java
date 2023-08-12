@@ -5,9 +5,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.exceptions.AlreadyExistException;
+import ru.practicum.shareit.exceptions.IncorrectParameterException;
 import ru.practicum.shareit.request.dto.ItemRequestDtoInput;
 import ru.practicum.shareit.request.dto.ItemRequestFullDto;
 
+import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
@@ -35,7 +37,7 @@ public class ItemRequestController {
     @GetMapping("/all")
     public List<ItemRequestFullDto> getUserRequests(@RequestHeader("X-Sharer-User-Id") long userId,
     @PositiveOrZero @RequestParam(defaultValue = "0") Integer from, @Positive @RequestParam(defaultValue = "10") Integer size) {
-        return (itemRequestService.getSort(userId, from, size));
+        return itemRequestService.getSort(userId, from, size);
     }
 
     @GetMapping("/{requestId}")
@@ -44,8 +46,22 @@ public class ItemRequestController {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)                                                 //Status code is 404
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, String> alreadyExistException(final AlreadyExistException e) {
+        return Map.of("error", "Ошибка",
+                "errorMessage", e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> IncorrectParameterException(final IncorrectParameterException e) {
+        return Map.of("error", "Ошибка",
+                "errorMessage", e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> ConstraintViolationException(final ConstraintViolationException e) {
         return Map.of("error", "Ошибка",
                 "errorMessage", e.getMessage());
     }

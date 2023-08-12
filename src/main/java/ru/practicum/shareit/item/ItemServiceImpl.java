@@ -5,24 +5,24 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.BookingStorage;
-import ru.practicum.shareit.booking.dto.Booking;
 import ru.practicum.shareit.booking.dto.BookingItemDto;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.dto.BookingStatus;
+import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.comments.CommentStorage;
-import ru.practicum.shareit.comments.dto.Comment;
 import ru.practicum.shareit.comments.dto.CommentDto;
 import ru.practicum.shareit.comments.dto.CommentMapper;
+import ru.practicum.shareit.comments.model.Comment;
 import ru.practicum.shareit.exceptions.AlreadyExistException;
 import ru.practicum.shareit.exceptions.ValidationException;
-import ru.practicum.shareit.item.dto.Item;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.validation.ItemValidation;
 import ru.practicum.shareit.request.ItemRequestStorage;
 import ru.practicum.shareit.user.UserServiceImpl;
 import ru.practicum.shareit.user.UserStorage;
-import ru.practicum.shareit.user.dto.User;
+import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -43,7 +43,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public ItemDto createItem(ItemDto itemDto, int ownerId) {
+    public ItemDto createItem(ItemDto itemDto, Long ownerId) {
 
         Item item = ItemMapper.toItem(itemDto);
 
@@ -138,7 +138,6 @@ public class ItemServiceImpl implements ItemService {
         return result;
     }
 
-
     @Override
     public List<ItemDto> getItemByText(String text) {
         List<Item> list = new ArrayList<>();
@@ -154,7 +153,6 @@ public class ItemServiceImpl implements ItemService {
         }
         return ItemMapper.toListItemDto(list);
     }
-
 
     @Transactional
     public CommentDto createComment(CommentDto commentDto, Long userId, Long itemId) {

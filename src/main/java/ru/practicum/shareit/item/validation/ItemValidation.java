@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.exceptions.AlreadyExistException;
 import ru.practicum.shareit.exceptions.ValidationException;
-import ru.practicum.shareit.item.dto.Item;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.dto.UserDto;
 
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ import java.util.Objects;
 @Slf4j
 @Component
 public class ItemValidation {
-    public boolean itemCreateValidation(Item item, int ownerId, List<Item> items, List<UserDto> listUser) {
+    public boolean itemCreateValidation(Item item, Long ownerId, List<Item> items, List<UserDto> listUser) {
         if (item.getName() == null || Objects.equals(item.getName(), "")) {
             log.debug("Ошибка валидации - краткое название не может быть пустым");
             throw new ValidationException("Ошибка валидации - краткое название не может быть пустым");

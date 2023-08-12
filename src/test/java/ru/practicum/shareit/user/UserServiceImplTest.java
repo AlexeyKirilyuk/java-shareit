@@ -7,11 +7,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.practicum.shareit.exceptions.AlreadyExistException;
-
+import ru.practicum.shareit.exceptions.ConflictException;
 import ru.practicum.shareit.exceptions.ValidationException;
-import ru.practicum.shareit.user.dto.User;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.validation.UserValidation;
 
 import java.util.*;
@@ -95,7 +95,7 @@ class UserServiceImplTest {
     void saveUser() {
         UserDto userDto = UserMapper.toUserDto(Optional.ofNullable(user1));
         when(userStorage.save(any(User.class))).thenReturn(user1);
-        when(userValidation.userCreateValidation(any(User.class), anyList())).thenReturn(true);
+        when(userValidation.userCreateValidation(any(User.class))).thenReturn(true);
 
         UserDto savedUserDto = userService.createUser(userDto);
 
@@ -114,7 +114,6 @@ class UserServiceImplTest {
 
         when(userStorage.findById(anyLong())).thenReturn(Optional.of(user1));
         when(userStorage.save(any())).thenReturn(user1);
-        when(userValidation.userUpdateValidation(anyLong(), any(User.class), anyList())).thenReturn(true);
 
         UserDto updatedUserDto = userService.updateUser(user1.getId(), userDto);
 
@@ -150,7 +149,6 @@ class UserServiceImplTest {
 
         when(userStorage.findById(anyLong())).thenReturn(Optional.of(user1));
         when(userStorage.save(user1)).thenReturn(user1);
-        when(userValidation.userUpdateValidation(anyLong(), any(User.class), anyList())).thenReturn(true);
 
         UserDto updatedUserDto = userService.updateUser(user1.getId(), userDto);
 
@@ -166,11 +164,12 @@ class UserServiceImplTest {
         userDto.setEmail(user2.getEmail());
 
         when(userStorage.findById(anyLong())).thenReturn(Optional.of(user1));
+        when(userStorage.findByEmailContainingIgnoreCase(any())).thenReturn(List.of(user1, user2));
 
         Exception exception = assertThrows(
-                ValidationException.class, () -> userService.updateUser(user1.getId(), userDto));
+                ConflictException.class, () -> userService.updateUser(user1.getId(), userDto));
 
-        String expectedMessage = "Ошибка валидации";
+        String expectedMessage = "Электронная почта уже занята";
         String actualMessage = exception.getMessage();
 
         assertTrue(actualMessage.contains(expectedMessage));

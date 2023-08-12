@@ -5,15 +5,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exceptions.AlreadyExistException;
+import ru.practicum.shareit.exceptions.ConflictException;
 import ru.practicum.shareit.exceptions.ValidationException;
-import ru.practicum.shareit.user.dto.User;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.validation.UserValidation;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -29,7 +31,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserDto createUser(UserDto userDto) {
         User user = UserMapper.toUser(userDto);
-        if (userValidation.userCreateValidation(user, userStorage.findAll())) {
+        if (userValidation.userCreateValidation(user)) {
             Optional<User> userOptional = Optional.of(userStorage.save(user));
             return UserMapper.toUserDto(userOptional);
         }
@@ -45,24 +47,18 @@ public class UserServiceImpl implements UserService {
         Optional<User> userDbOptional = userStorage.findById(id);
         if (userDbOptional.isEmpty()) {
             throw new AlreadyExistException("Пользователь с id = " + id + " не найден");
-        } else {
-            User userDb = userDbOptional.get();
-            if (userValidation.userUpdateValidation(id, user, userStorage.findAll())) {
-                if (user.getName() != null) {
-                    userDb.setName(user.getName());
-                }
-                if (user.getEmail() != null) {
-                    userDb.setEmail(user.getEmail());
-                }
-
-                Optional<User> userOptional = Optional.of(userStorage.save(userDb));
-                return UserMapper.toUserDto(userOptional);
-            } else {
-                log.debug("Ошибка валидации");
-                throw new ValidationException("Ошибка валидации");
-            }
+        } else if (!checkUserEmail(userDto.getEmail(), id)) {
+            throw new ConflictException("Электронная почта уже занята");
         }
-
+        User userDb = userDbOptional.get();
+        if (user.getName() != null) {
+            userDb.setName(user.getName());
+        }
+        if (user.getEmail() != null) {
+            userDb.setEmail(user.getEmail());
+        }
+        Optional<User> userOptional = Optional.of(userStorage.save(userDb));
+        return UserMapper.toUserDto(userOptional);
     }
 
     @Override
@@ -76,18 +72,27 @@ public class UserServiceImpl implements UserService {
         Optional<User> userDb = userStorage.findById(Long.valueOf(id));
         if (userDb.isPresent()) {
             userStorage.deleteById(id);
-//            entityManager.flush();
         } else {
             log.debug("Ошибка NOT_FOUND");
             throw new AlreadyExistException("Ошибка NOT_FOUND");
         }
-
-
     }
-
 
     @Override
     public List<UserDto> getAllUser() {
         return UserMapper.toListUserDto(userStorage.findAll());
+    }
+
+    public boolean checkUserEmail(String email, Long id) {
+        log.trace("Вызов метода checkUserEmail с email = {}, id = {}", email, id);
+        List<User> sameEmailUsers = userStorage.findByEmailContainingIgnoreCase(email);
+        if (sameEmailUsers.isEmpty())
+            return true;
+        for (User user : sameEmailUsers) {
+            if (!Objects.equals(user.getId(), id)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

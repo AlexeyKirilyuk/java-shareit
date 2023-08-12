@@ -2,7 +2,8 @@ package ru.practicum.shareit.request.dto;
 
 import lombok.experimental.UtilityClass;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.user.dto.User;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,10 +24,9 @@ public class ItemRequestMapper {
         return ItemRequestFullDto.builder()
                 .id(itemRequest.getId())
                 .description(itemRequest.getDescription())
-                .requestor(new User(itemRequest.getRequestor().getId(),itemRequest.getRequestor().getName(),itemRequest.getRequestor().getEmail()))
+                .requestor(new User(itemRequest.getRequestor().getId(), itemRequest.getRequestor().getName(), itemRequest.getRequestor().getEmail()))
                 .created(itemRequest.getCreated())
                 .items(items)
                 .build();
     }
-
 }

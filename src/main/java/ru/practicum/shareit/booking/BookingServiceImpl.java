@@ -1,6 +1,5 @@
 package ru.practicum.shareit.booking;
 
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -8,14 +7,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.*;
+import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.validation.BookingValidation;
 import ru.practicum.shareit.exceptions.AlreadyExistException;
 import ru.practicum.shareit.exceptions.IncorrectParameterException;
 import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.item.ItemStorage;
-import ru.practicum.shareit.item.dto.Item;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserStorage;
-import ru.practicum.shareit.user.dto.User;
+import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,10 +32,10 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingUserDto createBooking(Long userId, BookingDto bookingDto) {
-        if (bookingValidation.bookingCreateValidation(userId, bookingDto, itemStorage)) {
-            User user = checkUser(userId);
-            checkBooking(bookingDto);
-            Optional<Item> item = itemStorage.findById(bookingDto.getItemId());
+        Optional<Item> item = itemStorage.findById(bookingDto.getItemId());
+        User user = checkUser(userId);
+        checkBooking(bookingDto);
+        if (bookingValidation.bookingCreateValidation(userId, bookingDto, item)) {
             Booking booking = BookingMapper.fromBookingDtoInput(bookingDto, item.get(), user, BookingStatus.WAITING);
             booking = bookingStorage.save(booking);
             return BookingMapper.toBookingUserDto(booking);
@@ -119,7 +119,7 @@ public class BookingServiceImpl implements BookingService {
         int fromPage = fromElement / size;
         Pageable pageable = PageRequest.of(fromPage, size);
         try {
-        BookingState status = BookingState.valueOf(state);
+            BookingState status = BookingState.valueOf(state.toUpperCase());
         switch (status) {
             case ALL:
                 result = bookingStorage.findAllByBookerIdOrderByStartDesc(bookerId, pageable);

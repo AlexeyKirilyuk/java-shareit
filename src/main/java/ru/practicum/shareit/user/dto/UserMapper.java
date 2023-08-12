@@ -2,6 +2,7 @@ package ru.practicum.shareit.user.dto;
 
 import lombok.extern.slf4j.Slf4j;
 import ru.practicum.shareit.exceptions.AlreadyExistException;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
