@@ -9,5 +9,6 @@ import java.util.List;
 
 public interface ItemRequestStorage extends JpaRepository<ItemRequest, Long> {
     List<ItemRequest> findAllByRequestor_Id(Long requestorId);
+
     Page<ItemRequest> findAllByRequestor_IdNot(Long requesterId, Pageable pageable);
 }

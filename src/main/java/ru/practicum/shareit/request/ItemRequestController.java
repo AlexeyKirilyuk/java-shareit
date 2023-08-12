@@ -54,14 +54,14 @@ public class ItemRequestController {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> IncorrectParameterException(final IncorrectParameterException e) {
+    public Map<String, String> incorrectParameterException(final IncorrectParameterException e) {
         return Map.of("error", "Ошибка",
                 "errorMessage", e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> ConstraintViolationException(final ConstraintViolationException e) {
+    public Map<String, String> constraintViolationException(final ConstraintViolationException e) {
         return Map.of("error", "Ошибка",
                 "errorMessage", e.getMessage());
     }

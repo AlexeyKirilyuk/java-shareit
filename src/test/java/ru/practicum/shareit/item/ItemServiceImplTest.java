@@ -52,21 +52,21 @@ public class ItemServiceImplTest {
     private ItemRequestStorage itemRequestStorage;
     @Mock
     private UserServiceImpl userService;
-    private User user_1;
-    private User user_2;
+    private User user1;
+    private User user2;
     private ItemRequest itemRequest1;
-    private Item item_1;
-    private Item item_2;
+    private Item item1;
+    private Item item2;
 
     @BeforeEach
     void beforeEach() {
         itemService = new ItemServiceImpl(itemStorage, itemValidation, userStorage, itemRequestStorage, userService, commentStorage, bookingStorage);
-        user_1 = User.builder()
+        user1 = User.builder()
                 .id(1L)
                 .name("User_1 name")
                 .email("user_1@email.ru")
                 .build();
-        user_2 = User.builder()
+        user2 = User.builder()
                 .id(2L)
                 .name("User_2 name")
                 .email("user_2@email.ru")
@@ -74,21 +74,21 @@ public class ItemServiceImplTest {
         itemRequest1 = ItemRequest.builder()
                 .id(1L)
                 .description("ItemRequest description")
-                .requestor(user_1)
+                .requestor(user1)
                 .build();
-        item_1 = Item.builder()
+        item1 = Item.builder()
                 .id(1L)
                 .name("Item 1 name")
                 .description("Item 1 description")
                 .available(true)
-                .owner(user_1)
+                .owner(user1)
                 .build();
-        item_2 = Item.builder()
+        item2 = Item.builder()
                 .id(2L)
                 .name("Item 2 name")
                 .description("Item 2 description")
                 .available(true)
-                .owner(user_2)
+                .owner(user2)
                 .request(itemRequest1)
                 .build();
     }
@@ -96,11 +96,11 @@ public class ItemServiceImplTest {
     @Test
     void testAddNew() {
         Long newItemId = 5L;
-        ItemDto createItemDto = ItemMapper.toItemDto(item_1);
-        Long userId = item_1.getOwner().getId();
+        ItemDto createItemDto = ItemMapper.toItemDto(item1);
+        Long userId = item1.getOwner().getId();
 
         when(itemValidation.itemCreateValidation(any(Item.class), anyLong(), anyList(), anyList())).thenReturn(true);
-        when(userStorage.findById(userId)).thenReturn(Optional.of(item_1.getOwner()));
+        when(userStorage.findById(userId)).thenReturn(Optional.of(item1.getOwner()));
         when(itemStorage.save(Mockito.any(Item.class))).thenAnswer(
                 invocationOnMock -> {
                     Item item = invocationOnMock.getArgument(0, Item.class);
@@ -111,7 +111,7 @@ public class ItemServiceImplTest {
         ItemDto actualItemDto = itemService.createItem(createItemDto, userId);
 
         assertThat(actualItemDto.getId(), equalTo(newItemId));
-        assertThat(actualItemDto.getName(), equalTo(item_1.getName()));
+        assertThat(actualItemDto.getName(), equalTo(item1.getName()));
         assertThat(actualItemDto.getRequestId(), equalTo(null));
         verify(userStorage, times(1))
                 .findById(userId);
@@ -122,10 +122,10 @@ public class ItemServiceImplTest {
     @Test
     void testAddNewToItemRequest() {
         Long newItemId = 5L;
-        ItemDto createItemDto = ItemMapper.toItemDto(item_2);
-        Long userId = item_2.getOwner().getId();
+        ItemDto createItemDto = ItemMapper.toItemDto(item2);
+        Long userId = item2.getOwner().getId();
         when(itemValidation.itemCreateValidation(any(Item.class), anyLong(), anyList(), anyList())).thenReturn(true);
-        when(userStorage.findById(userId)).thenReturn(Optional.of(item_2.getOwner()));
+        when(userStorage.findById(userId)).thenReturn(Optional.of(item2.getOwner()));
         when(itemRequestStorage.findById(createItemDto.getRequestId())).thenReturn(Optional.of(itemRequest1));
         when(itemStorage.save(Mockito.any(Item.class))).thenAnswer(
                 invocationOnMock -> {
@@ -137,8 +137,8 @@ public class ItemServiceImplTest {
         ItemDto actualItemDto = itemService.createItem(createItemDto, userId);
 
         assertThat(actualItemDto.getId(), equalTo(newItemId));
-        assertThat(actualItemDto.getName(), equalTo(item_2.getName()));
-        assertThat(actualItemDto.getRequestId(), equalTo(item_2.getRequest().getId()));
+        assertThat(actualItemDto.getName(), equalTo(item2.getName()));
+        assertThat(actualItemDto.getRequestId(), equalTo(item2.getRequest().getId()));
         verify(userStorage, times(1))
                 .findById(userId);
         verify(itemRequestStorage, times(1))
@@ -150,18 +150,18 @@ public class ItemServiceImplTest {
     @Test
     void testPatchUpdate() {
         String newUserName = "New user name";
-        String expectedDesc = item_1.getDescription();
-        Long itemId = item_1.getId();
-        Long userId = item_1.getOwner().getId();
+        String expectedDesc = item1.getDescription();
+        Long itemId = item1.getId();
+        Long userId = item1.getOwner().getId();
         ItemDto itemDto = ItemDto.builder()
                 .name(newUserName)
                 .description(null)
                 .available(false)
                 .build();
         when(itemValidation.itemUpdateValidation(anyLong(), any(Item.class), anyLong(), anyList())).thenReturn(true);
-        when(itemStorage.findById(itemId)).thenReturn(Optional.of(item_1));
-        when(itemStorage.save(item_1)).thenReturn(item_1);
-        when(userStorage.findById(userId)).thenReturn(Optional.of(item_1.getOwner()));
+        when(itemStorage.findById(itemId)).thenReturn(Optional.of(item1));
+        when(itemStorage.save(item1)).thenReturn(item1);
+        when(userStorage.findById(userId)).thenReturn(Optional.of(item1.getOwner()));
 
         ItemDto actualItemDto = itemService.updateItem(userId, itemDto, itemId);
 
@@ -171,21 +171,21 @@ public class ItemServiceImplTest {
         verify(itemStorage, times(1))
                 .findById(itemId);
         verify(itemStorage, times(1))
-                .save(item_1);
+                .save(item1);
     }
 
     @Test
     void testPatchUpdateNoOwner() {
         List<Item> items = new ArrayList<>();
-        items.add(item_1);
-        items.add(item_2);
+        items.add(item1);
+        items.add(item2);
         List<User> users = new ArrayList<>();
-        users.add(user_1);
-        users.add(user_2);
+        users.add(user1);
+        users.add(user2);
 
         when(itemStorage.findAll()).thenReturn(items);
 
-        ItemDto itemDto = ItemMapper.toItemDto(item_1);
+        ItemDto itemDto = ItemMapper.toItemDto(item1);
 
         Exception exception = assertThrows(
                 ValidationException.class,
@@ -202,7 +202,7 @@ public class ItemServiceImplTest {
     void testPatchUpdateWrongItemId() {
         String newUserName = "New user name";
         Long itemId = 99L;
-        Long userId = item_1.getOwner().getId();
+        Long userId = item1.getOwner().getId();
         ItemDto itemDto = ItemDto.builder()
                 .name(newUserName)
                 .description(null)
@@ -216,16 +216,16 @@ public class ItemServiceImplTest {
 
     @Test
     void testGetByIdWithoutCommentsAndWithBookingGettingByNoOwner() {
-        Long itemId = item_1.getId();
-        Long userId = user_2.getId();
+        Long itemId = item1.getId();
+        Long userId = user2.getId();
 
-        when(itemStorage.findById(itemId)).thenReturn(Optional.of(item_1));
+        when(itemStorage.findById(itemId)).thenReturn(Optional.of(item1));
         when(commentStorage.findAllByItemId(anyLong())).thenReturn(Collections.emptyList());
 
         ItemDto actualItemDto = itemService.getItemById(userId, itemId);
 
         assertThat(actualItemDto.getId(), equalTo(itemId));
-        assertThat(actualItemDto.getName(), equalTo(item_1.getName()));
+        assertThat(actualItemDto.getName(), equalTo(item1.getName()));
         assertThat(actualItemDto.getLastBooking(), equalTo(null));
         assertThat(actualItemDto.getNextBooking(), equalTo(null));
         assertThat(actualItemDto.getComments().size(), equalTo(0));
@@ -238,25 +238,25 @@ public class ItemServiceImplTest {
 
     @Test
     void testAddNewComment_whenValid() {
-        Long itemId = item_1.getId();
-        Long userId = user_2.getId();
+        Long itemId = item1.getId();
+        Long userId = user2.getId();
         CommentDto requestComment = CommentDto.builder()
                 .text("text")
                 .build();
         Comment expectedComment = Comment.builder()
                 .id(1L)
                 .text(requestComment.getText())
-                .item(item_1)
-                .authorName(user_2)
+                .item(item1)
+                .authorName(user2)
                 .created(LocalDateTime.now().minusHours(1))
                 .build();
         when(bookingStorage.existsByItemIdAndBookerIdAndStatusAndEndBefore(
                 Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
                 .thenReturn(true);
         when(itemStorage.findById(itemId))
-                .thenReturn(Optional.of(item_1));
+                .thenReturn(Optional.of(item1));
         when(userStorage.findById(userId))
-                .thenReturn(Optional.of(user_2));
+                .thenReturn(Optional.of(user2));
         when(commentStorage.save(Mockito.any()))
                 .thenAnswer(invocationOnMock -> {
                     Comment comment = invocationOnMock.getArgument(0, Comment.class);
@@ -278,8 +278,8 @@ public class ItemServiceImplTest {
 
     @Test
     void searchItemsTest() throws Exception {
-        List<ItemDto> items = Collections.singletonList(ItemMapper.toItemDto(item_1));
-        when(itemStorage.findAll()).thenReturn(Collections.singletonList(item_1));
+        List<ItemDto> items = Collections.singletonList(ItemMapper.toItemDto(item1));
+        when(itemStorage.findAll()).thenReturn(Collections.singletonList(item1));
 
         List<ItemDto> result = itemService.getItemByText("item");
         assertThat(result, equalTo(items));

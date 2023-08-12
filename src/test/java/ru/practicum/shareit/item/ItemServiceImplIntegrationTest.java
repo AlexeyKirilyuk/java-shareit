@@ -40,16 +40,16 @@ public class ItemServiceImplIntegrationTest {
                         .name("Item 1 name")
                         .description("Item 1 description")
                         .available(true)
-                        .build()
-                , userDto1.getId()
+                        .build(),
+                userDto1.getId()
         );
         itemDto2 = itemService.createItem(
                 ItemDto.builder()
                         .name("Item 2 name")
                         .description("Item 2 description")
                         .available(false)
-                        .build()
-                , userDto1.getId()
+                        .build(),
+                userDto1.getId()
         );
     }
 

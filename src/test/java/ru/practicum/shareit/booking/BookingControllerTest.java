@@ -34,8 +34,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class BookingControllerTest {
     @MockBean
     BookingService bookingService;
-    private BookingUserDto booking_1;
-    private BookingUserDto booking_2;
+    private BookingUserDto booking1;
+    private BookingUserDto booking2;
     private BookingDto bookingDto;
     @Autowired
     private MockMvc mockMvc;
@@ -71,7 +71,7 @@ public class BookingControllerTest {
                 .end(LocalDateTime.now().plusHours(2))
                 .itemId(item1.getId())
                 .build();
-        booking_1 = BookingUserDto.builder()
+        booking1 = BookingUserDto.builder()
                 .id(1L)
                 .start(LocalDateTime.now().plusHours(1))
                 .end(LocalDateTime.now().plusHours(2))
@@ -79,7 +79,7 @@ public class BookingControllerTest {
                 .booker(user1)
                 .status(BookingStatus.WAITING)
                 .build();
-        booking_2 = BookingUserDto.builder()
+        booking2 = BookingUserDto.builder()
                 .id(2L)
                 .start(LocalDateTime.now().plusDays(2).plusHours(1))
                 .end(LocalDateTime.now().plusDays(2).plusHours(2))
@@ -93,7 +93,7 @@ public class BookingControllerTest {
     @DisplayName("Создание бронирования")
     void createBooking() throws Exception {
         when(bookingService.createBooking(anyLong(), Mockito.any(BookingDto.class)))
-                .thenReturn(booking_1);
+                .thenReturn(booking1);
 
         mockMvc.perform(post("/bookings")
                         .header("X-Sharer-User-Id", 1)
@@ -102,7 +102,7 @@ public class BookingControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                 ).andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(booking_1.getId()), Long.class))
+                .andExpect(jsonPath("$.id", is(booking1.getId()), Long.class))
                 .andExpect(jsonPath("$.start", Matchers.notNullValue()))
                 .andExpect(jsonPath("$.end", Matchers.notNullValue()))
                 .andExpect(jsonPath("$.status", is("WAITING")));
@@ -112,14 +112,14 @@ public class BookingControllerTest {
     @DisplayName("Подтверждение бронирования")
     void confirmBooking() throws Exception {
         when(bookingService.confirmBooking(anyLong(), anyLong(), anyBoolean()))
-                .thenReturn(booking_2);
+                .thenReturn(booking2);
 
         mockMvc.perform(patch("/bookings/1")
                         .header("X-Sharer-User-Id", 1)
                         .param("approved", "true")
                         .accept(MediaType.APPLICATION_JSON)
                 ).andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(booking_2.getId()), Long.class))
+                .andExpect(jsonPath("$.id", is(booking2.getId()), Long.class))
                 .andExpect(jsonPath("$.start", Matchers.notNullValue()))
                 .andExpect(jsonPath("$.end", Matchers.notNullValue()))
                 .andExpect(jsonPath("$.status", is("APPROVED")));
@@ -129,13 +129,13 @@ public class BookingControllerTest {
     @DisplayName("Получение бронирования")
     void getBooking() throws Exception {
         when(bookingService.getBookingById(anyLong(), anyLong()))
-                .thenReturn(booking_1);
+                .thenReturn(booking1);
 
         mockMvc.perform(get("/bookings/1")
                         .header("X-Sharer-User-Id", 1)
                         .accept(MediaType.APPLICATION_JSON)
                 ).andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(booking_1.getId()), Long.class))
+                .andExpect(jsonPath("$.id", is(booking1.getId()), Long.class))
                 .andExpect(jsonPath("$.start", Matchers.notNullValue()))
                 .andExpect(jsonPath("$.end", Matchers.notNullValue()))
                 .andExpect(jsonPath("$.status", is("WAITING")));
@@ -145,7 +145,7 @@ public class BookingControllerTest {
     @DisplayName("Получение забронированных предметов")
     void getBookerBookings() throws Exception {
         List<BookingUserDto> bookings = new ArrayList<>();
-        bookings.add(booking_1);
+        bookings.add(booking1);
         when(bookingService.getAllBookerBookings(anyLong(), anyString(), anyInt(), anyInt()))
                 .thenReturn(bookings);
 
@@ -154,7 +154,7 @@ public class BookingControllerTest {
                         .param("state", "ALL")
                         .accept(MediaType.APPLICATION_JSON)
                 ).andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id", is(booking_1.getId()), Long.class))
+                .andExpect(jsonPath("$[0].id", is(booking1.getId()), Long.class))
                 .andExpect(jsonPath("$[0].start", Matchers.notNullValue()))
                 .andExpect(jsonPath("$[0].end", Matchers.notNullValue()))
                 .andExpect(jsonPath("$[0].status", is("WAITING")));
@@ -164,7 +164,7 @@ public class BookingControllerTest {
     @Test
     void getOwnerBookings() throws Exception {
         List<BookingUserDto> bookings = new ArrayList<>();
-        bookings.add(booking_1);
+        bookings.add(booking1);
         when(bookingService.getAllOwnerBookings(anyLong(), anyString(), anyInt(), anyInt()))
                 .thenReturn(bookings);
 
@@ -173,7 +173,7 @@ public class BookingControllerTest {
                         .param("state", "ALL")
                         .accept(MediaType.APPLICATION_JSON)
                 ).andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id", is(booking_1.getId()), Long.class))
+                .andExpect(jsonPath("$[0].id", is(booking1.getId()), Long.class))
                 .andExpect(jsonPath("$[0].start", Matchers.notNullValue()))
                 .andExpect(jsonPath("$[0].end", Matchers.notNullValue()))
                 .andExpect(jsonPath("$[0].status", is("WAITING")));

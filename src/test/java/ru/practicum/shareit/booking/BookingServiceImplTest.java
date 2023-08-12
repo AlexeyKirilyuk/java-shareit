@@ -44,37 +44,37 @@ public class BookingServiceImplTest {
     private ItemStorage itemStorage;
     @Mock
     private BookingValidation bookingValidation;
-    private User user_1;
-    private User user_2;
-    private Item item_1;
+    private User user1;
+    private User user2;
+    private Item item1;
     private Booking booking1;
 
     @BeforeEach
     void beforeEach() {
         bookingService = new BookingServiceImpl(bookingStorage, userStorage, itemStorage, bookingValidation);
-        user_1 = User.builder()
+        user1 = User.builder()
                 .id(1L)
                 .name("User 1 name")
                 .email("user1@email.ru")
                 .build();
-        user_2 = User.builder()
+        user2 = User.builder()
                 .id(2L)
                 .name("User 2 name")
                 .email("user2@email.ru")
                 .build();
-        item_1 = Item.builder()
+        item1 = Item.builder()
                 .id(1L)
                 .name("name")
                 .description("description")
                 .available(true)
-                .owner(user_1)
+                .owner(user1)
                 .build();
         booking1 = Booking.builder()
                 .id(1L)
                 .start(start)
                 .end(end)
-                .item(item_1)
-                .booker(user_2)
+                .item(item1)
+                .booker(user2)
                 .status(BookingStatus.WAITING)
                 .build();
     }
@@ -82,14 +82,14 @@ public class BookingServiceImplTest {
     @Test
     void testAddNew() {
         BookingDto bookingDto = BookingDto.builder()
-                .itemId(item_1.getId())
+                .itemId(item1.getId())
                 .start(start)
                 .end(end)
                 .build();
-        Long user2Id = user_2.getId();
+        Long user2Id = user2.getId();
         when(bookingValidation.bookingCreateValidation(anyLong(), any(BookingDto.class), any())).thenReturn(true);
-        when(itemStorage.findById(user_1.getId())).thenReturn(Optional.of(item_1));
-        when(userStorage.findById(user2Id)).thenReturn(Optional.of(user_2));
+        when(itemStorage.findById(user1.getId())).thenReturn(Optional.of(item1));
+        when(userStorage.findById(user2Id)).thenReturn(Optional.of(user2));
         when(bookingStorage.save(Mockito.any(Booking.class)))
                 .thenAnswer(invocationOnMock -> {
                     Booking booking = invocationOnMock.getArgument(0, Booking.class);
@@ -102,10 +102,10 @@ public class BookingServiceImplTest {
         assertThat(actualBooking.getId(), notNullValue());
         assertThat(actualBooking.getStart(), equalTo(start));
         assertThat(actualBooking.getEnd(), equalTo(end));
-        assertThat(actualBooking.getItem(), equalTo(ItemMapper.toItemDto(item_1)));
-        assertThat(actualBooking.getBooker(), equalTo(UserMapper.toUserDto(Optional.ofNullable(user_2))));
+        assertThat(actualBooking.getItem(), equalTo(ItemMapper.toItemDto(item1)));
+        assertThat(actualBooking.getBooker(), equalTo(UserMapper.toUserDto(Optional.ofNullable(user2))));
         assertThat(actualBooking.getStatus(), equalTo(BookingStatus.WAITING));
-        Mockito.verify(itemStorage, Mockito.times(1)).findById(item_1.getId());
+        Mockito.verify(itemStorage, Mockito.times(1)).findById(item1.getId());
         Mockito.verify(userStorage, Mockito.times(1)).findById(user2Id);
         Mockito.verify(bookingStorage, Mockito.times(1)).save(Mockito.any(Booking.class));
         Mockito.verifyNoMoreInteractions(itemStorage, userStorage, bookingStorage);
@@ -119,58 +119,58 @@ public class BookingServiceImplTest {
                 .end(end)
                 .build();
 
-        when(userStorage.findById(user_2.getId())).thenReturn(Optional.of(user_2));
+        when(userStorage.findById(user2.getId())).thenReturn(Optional.of(user2));
 
-        Assertions.assertThrows(ValidationException.class, () -> bookingService.createBooking(user_2.getId(), bookingDto));
+        Assertions.assertThrows(ValidationException.class, () -> bookingService.createBooking(user2.getId(), bookingDto));
     }
 
     @Test
     void testAddNewSameOwner() {
         BookingDto input = BookingDto.builder()
-                .itemId(item_1.getId())
+                .itemId(item1.getId())
                 .start(start)
                 .end(end)
                 .build();
-        when(itemStorage.findById(item_1.getId())).thenReturn(Optional.of(item_1));
-        when(userStorage.findById(user_1.getId())).thenReturn(Optional.of(user_1));
+        when(itemStorage.findById(item1.getId())).thenReturn(Optional.of(item1));
+        when(userStorage.findById(user1.getId())).thenReturn(Optional.of(user1));
 
         Assertions.assertThrows(ValidationException.class,
-                () -> bookingService.createBooking(user_1.getId(), input));
+                () -> bookingService.createBooking(user1.getId(), input));
         Mockito.verifyNoMoreInteractions(itemStorage);
     }
 
     @Test
     void testAddNewNotAvailItem() {
-        item_1.setAvailable(false);
+        item1.setAvailable(false);
         BookingDto bookingDto = BookingDto.builder()
-                .itemId(item_1.getId())
+                .itemId(item1.getId())
                 .start(start)
                 .end(end)
                 .build();
-        Long user2Id = user_2.getId();
+        Long user2Id = user2.getId();
 
-        when(itemStorage.findById(user_1.getId())).thenReturn(Optional.of(item_1));
-        when(userStorage.findById(user2Id)).thenReturn(Optional.of(user_2));
+        when(itemStorage.findById(user1.getId())).thenReturn(Optional.of(item1));
+        when(userStorage.findById(user2Id)).thenReturn(Optional.of(user2));
 
         Assertions.assertThrows(ValidationException.class,
                 () -> bookingService.createBooking(user2Id, bookingDto));
         Mockito.verify(itemStorage, Mockito.times(1))
-                .findById(item_1.getId());
+                .findById(item1.getId());
         Mockito.verifyNoMoreInteractions(itemStorage);
     }
 
     @Test
     void testAddNewEndBeforeStart() {
         BookingDto bookingDto = BookingDto.builder()
-                .itemId(item_1.getId())
+                .itemId(item1.getId())
                 .start(start.plusHours(1))
                 .end(end)
                 .build();
-        Long user2Id = user_2.getId();
+        Long user2Id = user2.getId();
 
         Mockito
                 .when(userStorage.findById(user2Id))
-                .thenReturn(Optional.of(user_2));
+                .thenReturn(Optional.of(user2));
 
         Assertions.assertThrows(ValidationException.class,
                 () -> bookingService.createBooking(user2Id, bookingDto));
@@ -179,15 +179,15 @@ public class BookingServiceImplTest {
     @Test
     void testAddNewStartSameAsEnd() {
         BookingDto bookingDto = BookingDto.builder()
-                .itemId(item_1.getId())
+                .itemId(item1.getId())
                 .start(start.plusHours(1))
                 .end(start.plusHours(1))
                 .build();
-        Long user2Id = user_2.getId();
+        Long user2Id = user2.getId();
 
         Mockito
                 .when(userStorage.findById(user2Id))
-                .thenReturn(Optional.of(user_2));
+                .thenReturn(Optional.of(user2));
 
         Assertions.assertThrows(ValidationException.class,
                 () -> bookingService.createBooking(user2Id, bookingDto));
@@ -196,15 +196,15 @@ public class BookingServiceImplTest {
     @Test
     void testAddNewEndBeforeNow() {
         BookingDto bookingDto = BookingDto.builder()
-                .itemId(item_1.getId())
+                .itemId(item1.getId())
                 .start(start.minusYears(1))
                 .end(end.minusYears(1))
                 .build();
-        Long user2Id = user_2.getId();
+        Long user2Id = user2.getId();
 
         Mockito
                 .when(userStorage.findById(user2Id))
-                .thenReturn(Optional.of(user_2));
+                .thenReturn(Optional.of(user2));
 
         Assertions.assertThrows(ValidationException.class,
                 () -> bookingService.createBooking(user2Id, bookingDto));
@@ -213,11 +213,11 @@ public class BookingServiceImplTest {
     @Test
     void testAddNewForOwnItem() {
         BookingDto bookingDto = BookingDto.builder()
-                .itemId(item_1.getId())
+                .itemId(item1.getId())
                 .start(start)
                 .end(end)
                 .build();
-        Long user2Id = user_1.getId();
+        Long user2Id = user1.getId();
 
         Assertions.assertThrows(AlreadyExistException.class,
                 () -> bookingService.createBooking(user2Id, bookingDto));
@@ -232,7 +232,7 @@ public class BookingServiceImplTest {
         when(bookingValidation.bookingUpdateValidation(anyLong(), anyLong(), anyBoolean(), any())).thenReturn(true);
         Mockito
                 .when(userStorage.findById(itemOwnerId))
-                .thenReturn(Optional.of(user_1));
+                .thenReturn(Optional.of(user1));
         Mockito
                 .when(bookingStorage.findById(bookingId))
                 .thenReturn(Optional.of(booking1));
@@ -278,7 +278,7 @@ public class BookingServiceImplTest {
         Integer defaultSize = 20;
         Mockito
                 .when(userStorage.findById(bookerId))
-                .thenReturn(Optional.of(user_1));
+                .thenReturn(Optional.of(user1));
         Mockito
                 .when(bookingStorage.findAllByBookerIdOrderByStartDesc(
                         Mockito.anyLong(),
@@ -302,7 +302,7 @@ public class BookingServiceImplTest {
         Integer defaultSize = 20;
         Mockito
                 .when(userStorage.findById(bookerId))
-                .thenReturn(Optional.of(user_1));
+                .thenReturn(Optional.of(user1));
         Mockito
                 .when(bookingStorage.findAllByBookerIdOrderByStartDesc(
                         Mockito.anyLong(),
@@ -326,7 +326,7 @@ public class BookingServiceImplTest {
         Integer defaultSize = 20;
         Mockito
                 .when(userStorage.findById(bookerId))
-                .thenReturn(Optional.of(user_1));
+                .thenReturn(Optional.of(user1));
         Mockito
                 .when(bookingStorage.findAllByBookerIdAndEndBeforeOrderByStartDesc(
                         Mockito.anyLong(),
@@ -352,7 +352,7 @@ public class BookingServiceImplTest {
         Integer defaultSize = 20;
         Mockito
                 .when(userStorage.findById(bookerId))
-                .thenReturn(Optional.of(user_1));
+                .thenReturn(Optional.of(user1));
         Mockito
                 .when(bookingStorage.findAllByBookerIdAndStartBeforeAndEndAfterOrderByStartDesc(
                         Mockito.anyLong(),
@@ -382,7 +382,7 @@ public class BookingServiceImplTest {
         Integer defaultSize = 20;
         Mockito
                 .when(userStorage.findById(bookerId))
-                .thenReturn(Optional.of(user_1));
+                .thenReturn(Optional.of(user1));
         Mockito
                 .when(bookingStorage.findAllByBookerIdAndStartAfterOrderByStartDesc(
                         Mockito.anyLong(), Mockito.any(LocalDateTime.class), Mockito.any(Pageable.class)))
@@ -406,7 +406,7 @@ public class BookingServiceImplTest {
         Integer defaultSize = 20;
         Mockito
                 .when(userStorage.findById(bookerId))
-                .thenReturn(Optional.of(user_1));
+                .thenReturn(Optional.of(user1));
         Mockito
                 .when(bookingStorage.findAllByBookerIdAndStatusOrderByStartDesc(
                         Mockito.anyLong(), Mockito.any(BookingStatus.class), Mockito.any(Pageable.class)))
@@ -430,7 +430,7 @@ public class BookingServiceImplTest {
         Integer defaultSize = 20;
         Mockito
                 .when(userStorage.findById(bookerId))
-                .thenReturn(Optional.of(user_1));
+                .thenReturn(Optional.of(user1));
 
         IncorrectParameterException e = Assertions.assertThrows(IncorrectParameterException.class,
                 () -> bookingService.getAllBookerBookings(bookerId, state, defaultFromElement, defaultSize));
@@ -460,7 +460,7 @@ public class BookingServiceImplTest {
         Integer defaultSize = 20;
         Mockito
                 .when(userStorage.findById(Mockito.anyLong()))
-                .thenReturn(Optional.of(user_1));
+                .thenReturn(Optional.of(user1));
 
         ValidationException e = Assertions.assertThrows(ValidationException.class,
                 () -> bookingService.getAllBookerBookings(bookerId, state, defaultFromElement, defaultSize));
@@ -475,7 +475,7 @@ public class BookingServiceImplTest {
         Integer defaultSize = 20;
         Mockito
                 .when(userStorage.findById(ownerId))
-                .thenReturn(Optional.of(user_1));
+                .thenReturn(Optional.of(user1));
         Mockito
                 .when(bookingStorage.findAllByItemOwnerIdOrderByStartDesc(Mockito.anyLong(), Mockito.any(Pageable.class)))
                 .thenReturn(new ArrayList<>());
@@ -497,7 +497,7 @@ public class BookingServiceImplTest {
         Integer defaultSize = 20;
         Mockito
                 .when(userStorage.findById(ownerId))
-                .thenReturn(Optional.of(user_1));
+                .thenReturn(Optional.of(user1));
         Mockito
                 .when(bookingStorage.findAllByItemOwnerIdAndEndBeforeOrderByStartDesc(
                         Mockito.anyLong(), Mockito.any(), Mockito.any(Pageable.class)))
@@ -521,7 +521,7 @@ public class BookingServiceImplTest {
         Integer defaultSize = 20;
         Mockito
                 .when(userStorage.findById(ownerId))
-                .thenReturn(Optional.of(user_1));
+                .thenReturn(Optional.of(user1));
         Mockito
                 .when(bookingStorage.findAllByItemOwnerIdAndStartAfterOrderByStartDesc(
                         Mockito.anyLong(), Mockito.any(), Mockito.any(Pageable.class)))
@@ -545,7 +545,7 @@ public class BookingServiceImplTest {
         Integer defaultSize = 20;
         Mockito
                 .when(userStorage.findById(ownerId))
-                .thenReturn(Optional.of(user_1));
+                .thenReturn(Optional.of(user1));
         Mockito
                 .when(bookingStorage.findAllByItemOwnerIdAndStartBeforeAndEndAfterOrderByStartDesc(
                         Mockito.anyLong(), Mockito.any(), Mockito.any(), Mockito.any(Pageable.class)))
@@ -569,7 +569,7 @@ public class BookingServiceImplTest {
         Integer defaultSize = 20;
         Mockito
                 .when(userStorage.findById(ownerId))
-                .thenReturn(Optional.of(user_1));
+                .thenReturn(Optional.of(user1));
         Mockito
                 .when(bookingStorage.findAllByItemOwnerIdAndStatusOrderByStartDesc(
                         Mockito.anyLong(), Mockito.any(), Mockito.any(Pageable.class)))
@@ -593,7 +593,7 @@ public class BookingServiceImplTest {
         Integer defaultSize = 20;
         Mockito
                 .when(userStorage.findById(ownerId))
-                .thenReturn(Optional.of(user_1));
+                .thenReturn(Optional.of(user1));
         Mockito
                 .when(bookingStorage.findAllByItemOwnerIdAndStatusOrderByStartDesc(
                         Mockito.anyLong(), Mockito.any(), Mockito.any(Pageable.class)))
@@ -614,10 +614,10 @@ public class BookingServiceImplTest {
         BookingDto input = BookingDto.builder()
                 .start(start)
                 .end(end)
-                .itemId(item_1.getId())
+                .itemId(item1.getId())
                 .build();
 
-        Booking between = BookingMapper.fromBookingDtoInput(input, item_1, user_1, BookingStatus.APPROVED);
+        Booking between = BookingMapper.fromBookingDtoInput(input, item1, user1, BookingStatus.APPROVED);
 
         assertThat(between.getStart(), equalTo(input.getStart()));
         assertThat(between.getEnd(), equalTo(input.getEnd()));
@@ -628,6 +628,6 @@ public class BookingServiceImplTest {
 
         assertThat(betweenDto.getStart(), equalTo(between.getStart()));
         assertThat(betweenDto.getEnd(), equalTo(between.getEnd()));
-        assertThat(betweenDto.getBookerId(), equalTo(user_1.getId()));
+        assertThat(betweenDto.getBookerId(), equalTo(user1.getId()));
     }
 }
