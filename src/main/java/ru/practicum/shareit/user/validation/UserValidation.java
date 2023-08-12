@@ -26,6 +26,7 @@ public class UserValidation {
         }
         return true;
     }
+
     public boolean userUpdateValidation(long id, User user, List<User> users) {
         return true;
     }
