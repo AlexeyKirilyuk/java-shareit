@@ -140,7 +140,9 @@ public class ItemServiceImpl implements ItemService {
             return ItemMapper.toListItemDto(list);
         }
         for (Item item : itemStorage.findAll()) {
-            if (item.getName().toLowerCase().contains(text.toLowerCase())|| item.getDescription().toLowerCase().contains(text.toLowerCase())&& item.getAvailable() == Boolean.TRUE) {
+            if (item.getName().toLowerCase().contains(text.toLowerCase())
+                    || item.getDescription().toLowerCase().contains(text.toLowerCase())
+                    && item.getAvailable() == Boolean.TRUE) {
                 list.add(item);
             }
         }

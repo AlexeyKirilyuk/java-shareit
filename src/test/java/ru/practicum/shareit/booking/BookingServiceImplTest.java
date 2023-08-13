@@ -105,7 +105,6 @@ public class BookingServiceImplTest {
         assertThat(actualBooking.getItem(), equalTo(ItemMapper.toItemDto(item1)));
         assertThat(actualBooking.getBooker(), equalTo(UserMapper.toUserDto(Optional.ofNullable(user2))));
         assertThat(actualBooking.getStatus(), equalTo(BookingStatus.WAITING));
-    
         Mockito.verify(userStorage, Mockito.times(1)).findById(user2Id);
         Mockito.verify(bookingStorage, Mockito.times(1)).save(Mockito.any(Booking.class));
         Mockito.verifyNoMoreInteractions(itemStorage, userStorage, bookingStorage);
@@ -232,6 +231,7 @@ public class BookingServiceImplTest {
                 .save(booking1);
 
     }
+
     @Test
     void testConfirmBookingNonValidation() {
         Long bookingId = booking1.getId();
@@ -265,7 +265,7 @@ public class BookingServiceImplTest {
                 .thenReturn(Optional.of(booking1.getBooker()));
 
         AlreadyExistException e = Assertions.assertThrows(AlreadyExistException.class,
-                () ->  bookingService.getBookingById(bookingId, requesterId))   ;
+                () ->  bookingService.getBookingById(bookingId, requesterId));
 
         assertThat(e.getMessage(), equalTo(("Этот пользователь не может одобрить бронирование")));
 
@@ -281,11 +281,12 @@ public class BookingServiceImplTest {
                 .thenReturn(Optional.of(booking1.getBooker()));
 
         AlreadyExistException e = Assertions.assertThrows(AlreadyExistException.class,
-                () ->  bookingService.getBookingById(bookingId, requesterId))   ;
+                () ->  bookingService.getBookingById(bookingId, requesterId));
 
         assertThat(e.getMessage(), equalTo("Бронирование с id = " + bookingId + " не найдено."));
 
     }
+
     @Test
     void testGetBooking() {
         Long bookingId = booking1.getId();

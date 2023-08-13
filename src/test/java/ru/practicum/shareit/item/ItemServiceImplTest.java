@@ -10,7 +10,6 @@ import ru.practicum.shareit.booking.BookingStorage;
 import ru.practicum.shareit.comments.CommentStorage;
 import ru.practicum.shareit.comments.dto.CommentDto;
 import ru.practicum.shareit.comments.model.Comment;
-import ru.practicum.shareit.exceptions.AlreadyExistException;
 import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
@@ -28,7 +27,6 @@ import java.util.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
@@ -171,31 +169,7 @@ public class ItemServiceImplTest {
         verify(itemStorage, times(1))
                 .save(item1);
     }
-/*
-    @Test
-    void testPatchUpdateNoOwner() {
-        List<Item> items = new ArrayList<>();
-        items.add(item1);
-        items.add(item2);
-        List<User> users = new ArrayList<>();
-        users.add(user1);
-        users.add(user2);
 
-        when(itemStorage.findAll()).thenReturn(items);
-
-        ItemDto itemDto = ItemMapper.toItemDto(item1);
-
-        Exception exception = assertThrows(
-                ValidationException.class,
-                () -> itemService.createItem(itemDto, 10L));
-
-        String expectedMessage = "Ошибка валидации";
-        String actualMessage = exception.getMessage();
-        System.out.println(actualMessage);
-        assertTrue(actualMessage.contains(expectedMessage));
-        verify(itemStorage, never()).save(any());
-    }
-*/
     @Test
     void testPatchUpdateWrongItemId() {
         String newUserName = "New user name";

@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.booking.dto.BookingStatus;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.validation.BookingValidation;
 import ru.practicum.shareit.exceptions.AlreadyExistException;
@@ -16,8 +15,6 @@ import ru.practicum.shareit.user.model.User;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static ru.practicum.shareit.booking.dto.BookingStatus.APPROVED;
@@ -174,6 +171,7 @@ public class BookingValidationTest {
 
         assertTrue(actualMessage.contains(expectedMessage));
     }
+
     @Test
     void testAddNewBookingEndIsNull() {
         Long userId = 2L;

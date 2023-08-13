@@ -10,14 +10,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.exceptions.AlreadyExistException;
 import ru.practicum.shareit.exceptions.IncorrectParameterException;
-import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.request.dto.ItemRequestDtoInput;
 import ru.practicum.shareit.request.dto.ItemRequestFullDto;
 import ru.practicum.shareit.request.dto.ItemRequestMapper;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
-import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -102,7 +100,7 @@ public class ItemRequestControllerTest {
         result.add(ItemRequestMapper.toItemRequestWithItemsDto(itemRequest1, null));
         result.add(ItemRequestMapper.toItemRequestWithItemsDto(itemRequest2, null));
 
-        Mockito .when(requestService.getSort(userId, defaultFrom, defaultSize))
+        Mockito.when(requestService.getSort(userId, defaultFrom, defaultSize))
                 .thenThrow(new AlreadyExistException("Ошибка"));
 
         mockMvc.perform(get("/requests/all")
@@ -122,7 +120,7 @@ public class ItemRequestControllerTest {
         result.add(ItemRequestMapper.toItemRequestWithItemsDto(itemRequest1, null));
         result.add(ItemRequestMapper.toItemRequestWithItemsDto(itemRequest2, null));
 
-        Mockito .when(requestService.getSort(userId, defaultFrom, defaultSize))
+        Mockito.when(requestService.getSort(userId, defaultFrom, defaultSize))
                 .thenThrow(new IncorrectParameterException("Ошибка"));
 
         mockMvc.perform(get("/requests/all")
