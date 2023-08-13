@@ -32,10 +32,11 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingUserDto createBooking(Long userId, BookingDto bookingDto) {
+        checkItem(bookingDto.getItemId());
         Optional<Item> item = itemStorage.findById(bookingDto.getItemId());
-        User user = checkUser(userId);
-        checkBooking(bookingDto);
         if (bookingValidation.bookingCreateValidation(userId, bookingDto, item)) {
+            User user = checkUser(userId);
+            checkBooking(bookingDto);
             Booking booking = BookingMapper.fromBookingDtoInput(bookingDto, item.get(), user, BookingStatus.WAITING);
             booking = bookingStorage.save(booking);
             return BookingMapper.toBookingUserDto(booking);
@@ -48,7 +49,7 @@ public class BookingServiceImpl implements BookingService {
     public BookingUserDto confirmBooking(Long bookingId, Long userId, Boolean approved) {
         checkUser(userId);
         Optional<Booking> booking = bookingStorage.findById(bookingId);
-        if (bookingValidation.bookingUpdateValidation(bookingId, userId, approved, booking)) {
+        if (bookingValidation.bookingUpdateValidation(bookingId, userId, booking)) {
             booking.get().setStatus(approved ? BookingStatus.APPROVED : BookingStatus.REJECTED);
             Booking result = bookingStorage.save(booking.get());
             return BookingMapper.toBookingUserDto(result);
@@ -62,11 +63,15 @@ public class BookingServiceImpl implements BookingService {
         checkUser(userId);
         Optional<Booking> booking = bookingStorage.findById(bookingId);
         if (booking.isEmpty()) {
-            throw new AlreadyExistException("Бронирование с id = " + bookingId + " не найдено.");
+            String e = "Бронирование с id = " + bookingId + " не найдено.";
+            log.debug(e);
+            throw new AlreadyExistException(e);
         } else {
             if (!booking.get().getBooker().getId().equals(userId)
                     && !booking.get().getItem().getOwner().getId().equals(userId)) {
-                throw new AlreadyExistException("Пользователь с id = " + userId + " не может одобрить бронирование");
+                String e = "Этот пользователь не может одобрить бронирование";
+                log.debug(e);
+                throw new AlreadyExistException(e);
             }
             return BookingMapper.toBookingUserDto(booking.get());
         }
@@ -158,6 +163,16 @@ public class BookingServiceImpl implements BookingService {
                           .orElseThrow(() -> new AlreadyExistException("Пользователь с id = " + userId + " не найден"));
     }
 
+    private Item checkItem(Long itemId) {
+        log.trace("Вызов метода checkItem с itemId = {}", itemId);
+        Optional<Item> item = itemStorage.findById(itemId);
+        if (item.isPresent()) {
+            return item.get();
+        } else {
+            throw new AlreadyExistException("Предмет с id = " + itemId + " не найден");
+        }
+    }
+
     public void checkBooking(BookingDto booking) {
         if (booking.getEnd().isBefore(LocalDateTime.now())) {
             throw new ValidationException("Ошибка во времени бронирования: " +
@@ -178,4 +193,5 @@ public class BookingServiceImpl implements BookingService {
             throw new ValidationException("Некорректный ввод страниц и размеров");
         }
     }
+
 }

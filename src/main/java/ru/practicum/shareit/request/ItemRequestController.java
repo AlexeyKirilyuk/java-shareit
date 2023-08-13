@@ -48,15 +48,13 @@ public class ItemRequestController {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, String> alreadyExistException(final AlreadyExistException e) {
-        return Map.of("error", "Ошибка",
-                "errorMessage", e.getMessage());
+        return Map.of("error", "Ошибка", "errorMessage", e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> incorrectParameterException(final IncorrectParameterException e) {
-        return Map.of("error", "Ошибка",
-                "errorMessage", e.getMessage());
+        return Map.of("error", "Ошибка","errorMessage", e.getMessage());
     }
 
     @ExceptionHandler

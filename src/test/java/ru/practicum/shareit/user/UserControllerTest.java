@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import ru.practicum.shareit.exceptions.ConflictException;
 import ru.practicum.shareit.exceptions.AlreadyExistException;
+import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.user.dto.UserDto;
 
 import java.util.ArrayList;
@@ -70,6 +71,18 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$[1].id", is(userDto2.getId()), Long.class))
                 .andExpect(jsonPath("$[1].name", is(userDto2.getName())))
                 .andExpect(jsonPath("$[1].email", is(userDto2.getEmail())));
+    }
+
+    @Test
+    void getAllUsersValidationException() throws Exception {
+        List<UserDto> users = new ArrayList<>();
+        users.add(userDto1);
+        users.add(userDto2);
+        when(userService.getAllUser()).thenThrow(new ValidationException("Ошибка валидации"));
+
+        mockMvc.perform(get("/users")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 
     @Test

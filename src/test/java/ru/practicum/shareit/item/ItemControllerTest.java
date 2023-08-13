@@ -12,6 +12,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 import ru.practicum.shareit.comments.dto.CommentDto;
+import ru.practicum.shareit.exceptions.AlreadyExistException;
+import ru.practicum.shareit.exceptions.ConflictException;
+import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.item.dto.ItemDto;
 
 import java.nio.charset.StandardCharsets;
@@ -90,6 +93,42 @@ public class ItemControllerTest {
                 .andExpect(jsonPath("$[1].name", is(item2.getName())))
                 .andExpect(jsonPath("$[1].description", is(item2.getDescription())))
                 .andExpect(jsonPath("$[1].available", is(item2.getAvailable())));
+    }
+
+    @Test
+    void getUserItemsValidationException() throws Exception {
+        List<ItemDto> items = new ArrayList<>();
+        items.add(item1);
+        items.add(item2);
+
+        when(itemService.getItemByOwner(anyLong())).thenThrow(new ValidationException("Ошибка валидации"));
+
+        mockMvc.perform(get("/items").header("X-Sharer-User-Id", 1).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void getUserItemsAlreadyExistException() throws Exception {
+        List<ItemDto> items = new ArrayList<>();
+        items.add(item1);
+        items.add(item2);
+
+        when(itemService.getItemByOwner(anyLong())).thenThrow(new AlreadyExistException("Ошибка"));
+
+        mockMvc.perform(get("/items").header("X-Sharer-User-Id", 1).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void getUserItemsConflictException() throws Exception {
+        List<ItemDto> items = new ArrayList<>();
+        items.add(item1);
+        items.add(item2);
+
+        when(itemService.getItemByOwner(anyLong())).thenThrow(new ConflictException("Ошибка"));
+
+        mockMvc.perform(get("/items").header("X-Sharer-User-Id", 1).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isConflict());
     }
 
     @Test

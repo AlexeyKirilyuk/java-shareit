@@ -8,12 +8,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.practicum.shareit.exceptions.AlreadyExistException;
+import ru.practicum.shareit.exceptions.IncorrectParameterException;
+import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.request.dto.ItemRequestDtoInput;
 import ru.practicum.shareit.request.dto.ItemRequestFullDto;
 import ru.practicum.shareit.request.dto.ItemRequestMapper;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
+import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -87,6 +91,46 @@ public class ItemRequestControllerTest {
         Mockito.verify(requestService, Mockito.only())
                 .create(anyLong(), Mockito.any());
         Mockito.verifyNoMoreInteractions(requestService);
+    }
+
+    @Test
+    void getSortAlreadyExistException() throws Exception {
+        Long userId = user1.getId();
+        Integer defaultFrom = 0;
+        Integer defaultSize = 20;
+        List<ItemRequestFullDto> result = new ArrayList<>();
+        result.add(ItemRequestMapper.toItemRequestWithItemsDto(itemRequest1, null));
+        result.add(ItemRequestMapper.toItemRequestWithItemsDto(itemRequest2, null));
+
+        Mockito .when(requestService.getSort(userId, defaultFrom, defaultSize))
+                .thenThrow(new AlreadyExistException("Ошибка"));
+
+        mockMvc.perform(get("/requests/all")
+                        .contentType("application/json")
+                        .header("X-Sharer-User-Id", userId)
+                        .param("from", defaultFrom.toString())
+                        .param("size", defaultSize.toString()))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void getSortIncorrectParameterException() throws Exception {
+        Long userId = user1.getId();
+        Integer defaultFrom = 0;
+        Integer defaultSize = 20;
+        List<ItemRequestFullDto> result = new ArrayList<>();
+        result.add(ItemRequestMapper.toItemRequestWithItemsDto(itemRequest1, null));
+        result.add(ItemRequestMapper.toItemRequestWithItemsDto(itemRequest2, null));
+
+        Mockito .when(requestService.getSort(userId, defaultFrom, defaultSize))
+                .thenThrow(new IncorrectParameterException("Ошибка"));
+
+        mockMvc.perform(get("/requests/all")
+                        .contentType("application/json")
+                        .header("X-Sharer-User-Id", userId)
+                        .param("from", defaultFrom.toString())
+                        .param("size", defaultSize.toString()))
+                .andExpect(status().isBadRequest());
     }
 
     @Test

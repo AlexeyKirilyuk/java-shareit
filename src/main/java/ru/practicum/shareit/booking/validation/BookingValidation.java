@@ -16,12 +16,12 @@ import java.util.Optional;
 public class BookingValidation {
     public boolean bookingCreateValidation(Long userId, BookingDto bookingDto, Optional<Item> item) {
         if (bookingDto.getItemId() == null) {
-            String e = "Предмет с id = " + bookingDto.getItemId() + " не найден";
+            String e = "Предмет с этим id не найден";
             log.debug(e);
             throw new AlreadyExistException(e);
         }
-        if (item.isEmpty()) {
-            String e = "Предмет с id = " + bookingDto.getItemId() + " не найден(isEmpty)";
+        if (item == null) {
+            String e = "Предмет не найден(isEmpty)";
             log.debug(e);
             throw new AlreadyExistException(e);
         } else if (!item.get().getAvailable()) {
@@ -44,11 +44,10 @@ public class BookingValidation {
         return true;
     }
 
-    public boolean bookingUpdateValidation(Long bookingId, Long userId, Boolean approved, Optional<Booking> booking) {
+    public boolean bookingUpdateValidation(Long bookingId, Long userId, Optional<Booking> booking) {
         if (booking.isEmpty()) {
-            String e = "Бронирование с id = " + bookingId + " не найдено.";
-            log.debug(e);
-            throw new ValidationException(e);
+            log.debug("Бронирование с id = " + bookingId + " не найдено.");
+            throw new ValidationException("Бронирование с id = " + bookingId + " не найдено.");
         } else if (booking.get().getItem().getOwner().getId().equals(userId)
                 && booking.get().getStatus().equals(BookingStatus.APPROVED)) {
             String e = "Вещь уже забронирована.";

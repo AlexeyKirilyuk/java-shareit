@@ -48,7 +48,7 @@ public class ItemServiceImpl implements ItemService {
         Item item = ItemMapper.toItem(itemDto);
 
         userService.getAllUser();
-        if (itemValidation.itemCreateValidation(item, ownerId, itemStorage.findAll(), userService.getAllUser())) {
+        if (itemValidation.itemCreateValidation(item, ownerId, userService.getAllUser())) {
             User user = checkUser((long) ownerId);
             item.setOwner(user);
             Long itemRequestId = itemDto.getRequestId();
@@ -68,7 +68,7 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto updateItem(Long id, ItemDto itemDto, Long ownerId) {
 
         Item item = ItemMapper.toItem(itemDto);
-        if (itemValidation.itemUpdateValidation(id, item, ownerId, itemStorage.findAll())) {
+        if (itemValidation.itemUpdateValidation(id, ownerId, itemStorage.findAll())) {
             Item itemDb = checkItem(id);
 
             item.setOwner(checkUser(ownerId));
@@ -91,13 +91,8 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto getItemById(Long userId, Long itemId) {
-        try {
-            Item item = checkItem(itemId);
-            return addBookingAndComment(item, userId);
-        } catch (NoSuchElementException e) {
-            log.debug("Ошибка - Значение отсутствует.");
-            throw new AlreadyExistException("Ошибка - Значение отсутствует.");
-        }
+        Item item = checkItem(itemId);
+        return addBookingAndComment(item, userId);
     }
 
     @Override
@@ -145,9 +140,7 @@ public class ItemServiceImpl implements ItemService {
             return ItemMapper.toListItemDto(list);
         }
         for (Item item : itemStorage.findAll()) {
-            if (item.getName().toLowerCase().contains(text.toLowerCase())
-                    || item.getDescription().toLowerCase().contains(text.toLowerCase())
-                    && item.getAvailable() == Boolean.TRUE) {
+            if (item.getName().toLowerCase().contains(text.toLowerCase())|| item.getDescription().toLowerCase().contains(text.toLowerCase())&& item.getAvailable() == Boolean.TRUE) {
                 list.add(item);
             }
         }
@@ -159,8 +152,7 @@ public class ItemServiceImpl implements ItemService {
         log.debug("Вызов метода createComment с itemId = {}, userId = {}", itemId, userId);
         User user = checkUser(userId);
         Item item = checkItem(itemId);
-        if (!bookingStorage.existsByItemIdAndBookerIdAndStatusAndEndBefore(
-                itemId, userId, BookingStatus.APPROVED, LocalDateTime.now()))
+        if (!bookingStorage.existsByItemIdAndBookerIdAndStatusAndEndBefore(itemId, userId, BookingStatus.APPROVED, LocalDateTime.now()))
             throw new ValidationException("Невозможно оставить комментарий");
 
         if (commentDto.getText() == null || commentDto.getText().isBlank())

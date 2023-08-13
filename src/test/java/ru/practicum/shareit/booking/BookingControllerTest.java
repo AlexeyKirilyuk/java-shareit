@@ -15,6 +15,9 @@ import org.springframework.web.context.WebApplicationContext;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingStatus;
 import ru.practicum.shareit.booking.dto.BookingUserDto;
+import ru.practicum.shareit.exceptions.AlreadyExistException;
+import ru.practicum.shareit.exceptions.IncorrectParameterException;
+import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.user.dto.UserDto;
 
@@ -106,6 +109,54 @@ public class BookingControllerTest {
                 .andExpect(jsonPath("$.start", Matchers.notNullValue()))
                 .andExpect(jsonPath("$.end", Matchers.notNullValue()))
                 .andExpect(jsonPath("$.status", is("WAITING")));
+    }
+
+    @Test
+    @DisplayName("Создание бронирования - ValidationException")
+    void createBookingValidationException() throws Exception {
+
+        when(bookingService.createBooking(anyLong(), Mockito.any(BookingDto.class)))
+                    .thenThrow(new ValidationException("Ошибка валидации"));
+
+        mockMvc.perform(post("/bookings")
+                        .header("X-Sharer-User-Id", 1)
+                        .content(objectMapper.writeValueAsString(bookingDto))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                ).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("Создание бронирования - IncorrectParameterException")
+    void createBookingIncorrectParameterException() throws Exception {
+
+        when(bookingService.createBooking(anyLong(), Mockito.any(BookingDto.class)))
+                .thenThrow(new IncorrectParameterException("Ошибка"));
+
+        mockMvc.perform(post("/bookings")
+                .header("X-Sharer-User-Id", 1)
+                .content(objectMapper.writeValueAsString(bookingDto))
+                .characterEncoding(StandardCharsets.UTF_8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("Создание бронирования - AlreadyExistException")
+    void createBookingAlreadyExistException() throws Exception {
+
+        when(bookingService.createBooking(anyLong(), Mockito.any(BookingDto.class)))
+                .thenThrow(new AlreadyExistException("Ошибка"));
+
+        mockMvc.perform(post("/bookings")
+                .header("X-Sharer-User-Id", 1)
+                .content(objectMapper.writeValueAsString(bookingDto))
+                .characterEncoding(StandardCharsets.UTF_8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isNotFound());
     }
 
     @Test

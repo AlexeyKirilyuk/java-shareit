@@ -45,8 +45,7 @@ public class UserController {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)                                               //Status code is 400
     public Map<String, String> validationException(final ValidationException e) {
-        return Map.of("error", "Ошибка валидации",
-                "errorMessage", e.getMessage());
+        return Map.of("error", "Ошибка валидации","errorMessage", e.getMessage());
     }
 
     @ExceptionHandler

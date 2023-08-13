@@ -14,47 +14,51 @@ import java.util.Objects;
 @Slf4j
 @Component
 public class ItemValidation {
-    public boolean itemCreateValidation(Item item, Long ownerId, List<Item> items, List<UserDto> listUser) {
-        if (item.getName() == null || Objects.equals(item.getName(), "")) {
-            log.debug("Ошибка валидации - краткое название не может быть пустым");
-            throw new ValidationException("Ошибка валидации - краткое название не может быть пустым");
+    public boolean itemCreateValidation(Item item, Long ownerId, List<UserDto> listUser) {
+            if (item.getName() == null || Objects.equals(item.getName(), "")) {
+            String e = "Ошибка валидации - краткое название не может быть пустым";
+            log.debug(e);
+            throw new ValidationException(e);
         }
         if (item.getDescription() == null) {
-            log.debug("Ошибка валидации - развёрнутое описание вещи не может быть пустым");
-            throw new ValidationException("Ошибка валидации - развёрнутое описание вещи не может быть пустым");
+            String e = "Ошибка валидации - развёрнутое описание вещи не может быть пустым";
+            log.debug(e);
+            throw new ValidationException(e);
         }
         if (ownerId == 0) {
-            log.debug("Ошибка валидации - владелец вещи не может быть пустой");
-            throw new ValidationException("Ошибка валидации - владелец вещи не может быть пустой");
+            String e = "Ошибка валидации - владелец вещи не может быть пустой";
+            log.debug(e);
+            throw new ValidationException(e);
         }
         if (item.getAvailable() == null) {
-            log.debug("Ошибка валидации - статус доступности вещи не может быть пустой");
-            throw new ValidationException("Ошибка валидации - статус доступности вещи не может быть пустой");
+            String e = "Ошибка валидации - статус доступности вещи не может быть пустой";
+            log.debug(e);
+            throw new ValidationException(e);
         } else {
             for (UserDto userDb : listUser) {
-                log.debug("userDb.getId() = " + userDb.getId() + " ownerId = " + ownerId);
                 if (userDb.getId() == ownerId) {
                     return true;
                 }
             }
         }
-        log.debug("Ошибка валидации - владелец вещи не найден.");
-        throw new AlreadyExistException("Ошибка валидации - владелец вещи не найден.");
-
-
+        String e = "Ошибка валидации - владелец вещи не найден.";
+        log.debug(e);
+        throw new AlreadyExistException(e);
     }
 
-    public boolean itemUpdateValidation(Long id, Item item, Long ownerId, List<Item> items) {
+    public boolean itemUpdateValidation(Long id, Long ownerId, List<Item> items) {
         List<Item> itemss = new ArrayList<>(items);
         if (ownerId == 0) {
-            log.debug("Ошибка валидации - владелец вещи не может быть пустой");
-            throw new ValidationException("Ошибка валидации - владелец вещи не может быть пустой");
+            String e = "Ошибка валидации - владелец вещи не может быть пустой";
+            log.debug(e);
+            throw new ValidationException(e);
         }
         for (Item savedItem : itemss) {
             if (Objects.equals(savedItem.getId(), id)) {
                 if (!Objects.equals(savedItem.getOwner().getId(), ownerId)) {
-                    log.debug("Ошибка - у вещи другой владелец.");
-                    throw new AlreadyExistException("Ошибка - у вещи другой владелец.");
+                    String e = "Ошибка - у вещи другой владелец.";
+                    log.debug(e);
+                    throw new AlreadyExistException(e);
                 }
             }
         }
