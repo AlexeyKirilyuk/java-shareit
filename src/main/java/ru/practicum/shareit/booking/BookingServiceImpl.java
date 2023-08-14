@@ -34,7 +34,7 @@ public class BookingServiceImpl implements BookingService {
     public BookingUserDto createBooking(Long userId, BookingDto bookingDto) {
         checkItem(bookingDto.getItemId());
         Optional<Item> item = itemStorage.findById(bookingDto.getItemId());
-        if (bookingValidation.bookingCreateValidation(userId, bookingDto, item)) {
+        if (bookingValidation.bookingCreateValidation(userId, bookingDto, item.get())) {
             User user = checkUser(userId);
             checkBooking(bookingDto);
             Booking booking = BookingMapper.fromBookingDtoInput(bookingDto, item.get(), user, BookingStatus.WAITING);
