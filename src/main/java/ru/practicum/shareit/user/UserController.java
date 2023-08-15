@@ -33,20 +33,19 @@ public class UserController {
     }
 
     @GetMapping
-    public List<UserDto> getUserById() {
+    public List<UserDto> getAllUser() {
         return userService.getAllUser();
     }
 
     @DeleteMapping(value = "/{id}")
-    public void deleteUserById(@PathVariable long id) {
+    public void deleteUserById(@PathVariable Long id) {
         userService.deleteUserById(id);
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)                                               //Status code is 400
     public Map<String, String> validationException(final ValidationException e) {
-        return Map.of("error", "Ошибка валидации",
-                "errorMessage", e.getMessage());
+        return Map.of("error", "Ошибка валидации","errorMessage", e.getMessage());
     }
 
     @ExceptionHandler

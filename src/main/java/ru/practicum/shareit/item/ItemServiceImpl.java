@@ -5,23 +5,24 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.BookingStorage;
-import ru.practicum.shareit.booking.dto.Booking;
 import ru.practicum.shareit.booking.dto.BookingItemDto;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.dto.BookingStatus;
+import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.comments.CommentStorage;
-import ru.practicum.shareit.comments.dto.Comment;
 import ru.practicum.shareit.comments.dto.CommentDto;
 import ru.practicum.shareit.comments.dto.CommentMapper;
+import ru.practicum.shareit.comments.model.Comment;
 import ru.practicum.shareit.exceptions.AlreadyExistException;
 import ru.practicum.shareit.exceptions.ValidationException;
-import ru.practicum.shareit.item.dto.Item;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.validation.ItemValidation;
+import ru.practicum.shareit.request.ItemRequestStorage;
 import ru.practicum.shareit.user.UserServiceImpl;
 import ru.practicum.shareit.user.UserStorage;
-import ru.practicum.shareit.user.dto.User;
+import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -35,21 +36,26 @@ public class ItemServiceImpl implements ItemService {
     private final ItemStorage itemStorage;
     private final ItemValidation itemValidation;
     private final UserStorage userStorage;
+    private final ItemRequestStorage itemRequestStorage;
     private final UserServiceImpl userService;
-
     private final CommentStorage commentStorage;
-
     private final BookingStorage bookingStorage;
 
     @Override
     @Transactional
-    public ItemDto createItem(ItemDto itemDto, int ownerId) {
+    public ItemDto createItem(ItemDto itemDto, Long ownerId) {
 
         Item item = ItemMapper.toItem(itemDto);
+
         userService.getAllUser();
-        if (itemValidation.itemCreateValidation(item, ownerId, itemStorage.findAll(), userService.getAllUser())) {
+        if (itemValidation.itemCreateValidation(item, ownerId, userService.getAllUser())) {
             User user = checkUser((long) ownerId);
             item.setOwner(user);
+            Long itemRequestId = itemDto.getRequestId();
+            if (itemRequestId != null) {
+                item.setRequest(itemRequestStorage.findById(itemRequestId)
+                    .orElseThrow(() -> new AlreadyExistException("Запрос с Id = " + itemRequestId + " не найден")));
+            }
             Optional<Item> itemOptional = Optional.of(itemStorage.save(item));
             return ItemMapper.toItemDto(itemOptional.get());
         }
@@ -62,7 +68,7 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto updateItem(Long id, ItemDto itemDto, Long ownerId) {
 
         Item item = ItemMapper.toItem(itemDto);
-        if (itemValidation.itemUpdateValidation(id, item, ownerId, itemStorage.findAll())) {
+        if (itemValidation.itemUpdateValidation(id, ownerId, itemStorage.findAll())) {
             Item itemDb = checkItem(id);
 
             item.setOwner(checkUser(ownerId));
@@ -85,13 +91,8 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto getItemById(Long userId, Long itemId) {
-        try {
-            Item item = checkItem(itemId);
-            return addBookingAndComment(item, userId);
-        } catch (NoSuchElementException e) {
-            log.debug("Ошибка - Значение отсутствует.");
-            throw new AlreadyExistException("Ошибка - Значение отсутствует.");
-        }
+        Item item = checkItem(itemId);
+        return addBookingAndComment(item, userId);
     }
 
     @Override
@@ -132,7 +133,6 @@ public class ItemServiceImpl implements ItemService {
         return result;
     }
 
-
     @Override
     public List<ItemDto> getItemByText(String text) {
         List<Item> list = new ArrayList<>();
@@ -149,14 +149,12 @@ public class ItemServiceImpl implements ItemService {
         return ItemMapper.toListItemDto(list);
     }
 
-
     @Transactional
     public CommentDto createComment(CommentDto commentDto, Long userId, Long itemId) {
         log.debug("Вызов метода createComment с itemId = {}, userId = {}", itemId, userId);
         User user = checkUser(userId);
         Item item = checkItem(itemId);
-        if (!bookingStorage.existsByItemIdAndBookerIdAndStatusAndEndBefore(
-                itemId, userId, BookingStatus.APPROVED, LocalDateTime.now()))
+        if (!bookingStorage.existsByItemIdAndBookerIdAndStatusAndEndBefore(itemId, userId, BookingStatus.APPROVED, LocalDateTime.now()))
             throw new ValidationException("Невозможно оставить комментарий");
 
         if (commentDto.getText() == null || commentDto.getText().isBlank())

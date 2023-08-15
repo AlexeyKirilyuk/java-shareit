@@ -20,7 +20,7 @@ public class ItemController {
     private final ItemService itemService;
 
     @PostMapping
-    public ItemDto createItem(@RequestBody ItemDto itemDto, @RequestHeader("X-Sharer-User-Id") int ownerId) {
+    public ItemDto createItem(@RequestBody ItemDto itemDto, @RequestHeader("X-Sharer-User-Id") Long ownerId) {
         return itemService.createItem(itemDto, ownerId);
     }
 
@@ -58,21 +58,18 @@ public class ItemController {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)                                               //Status code is 400
     public Map<String, String> validationException(final ValidationException e) {
-        return Map.of("error", "Ошибка валидации",
-                "errorMessage", e.getMessage());
+        return Map.of("error", "Ошибка валидации","errorMessage", e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)                                                 //Status code is 404
     public Map<String, String> alreadyExistException(final AlreadyExistException e) {
-        return Map.of("error", "Ошибка",
-                "errorMessage", e.getMessage());
+        return Map.of("error", "Ошибка","errorMessage", e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)                                                    //Status code is 409
     public Map<String, String> conflictException(final ConflictException e) {
-        return Map.of("error", "Ошибка",
-                "errorMessage", e.getMessage());
+        return Map.of("error", "Ошибка","errorMessage", e.getMessage());
     }
 }

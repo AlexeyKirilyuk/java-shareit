@@ -1,8 +1,9 @@
-package ru.practicum.shareit.booking.dto;
+package ru.practicum.shareit.booking.model;
 
 import lombok.*;
-import ru.practicum.shareit.item.dto.Item;
-import ru.practicum.shareit.user.dto.User;
+import ru.practicum.shareit.booking.dto.BookingStatus;
+import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -35,5 +36,4 @@ public class Booking {
     @Enumerated(EnumType.STRING)
     @NotNull
     private BookingStatus status;
-
 }

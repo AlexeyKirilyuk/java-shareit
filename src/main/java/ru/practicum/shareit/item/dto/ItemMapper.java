@@ -2,9 +2,10 @@ package ru.practicum.shareit.item.dto;
 
 import lombok.extern.slf4j.Slf4j;
 import ru.practicum.shareit.booking.dto.BookingItemDto;
-import ru.practicum.shareit.comments.dto.Comment;
 import ru.practicum.shareit.comments.dto.CommentDto;
 import ru.practicum.shareit.comments.dto.CommentMapper;
+import ru.practicum.shareit.comments.model.Comment;
+import ru.practicum.shareit.item.model.Item;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +55,6 @@ public class ItemMapper {
             result.setLastBooking(last);
         if (next != null)
             result.setNextBooking(next);
-
         return result;
     }
 
