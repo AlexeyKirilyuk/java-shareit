@@ -22,6 +22,20 @@ import javax.validation.constraints.PositiveOrZero;
 public class BookingController {
 	private final BookingClient bookingClient;
 
+	@PostMapping
+	public ResponseEntity<Object> bookItem(@RequestHeader("X-Sharer-User-Id") long userId,
+										   @RequestBody @Valid BookItemRequestDto requestDto) {
+		log.info("Creating booking {}, userId={}", requestDto, userId);
+		return bookingClient.bookItem(userId, requestDto);
+	}
+
+	@GetMapping("/{bookingId}")
+	public ResponseEntity<Object> getBooking(@RequestHeader("X-Sharer-User-Id") long userId,
+											 @PathVariable Long bookingId) {
+		log.info("Get booking {}, userId={}", bookingId, userId);
+		return bookingClient.getBooking(userId, bookingId);
+	}
+
 	@GetMapping
 	public ResponseEntity<Object> getBookings(@RequestHeader("X-Sharer-User-Id") long userId,
 			@RequestParam(name = "state", defaultValue = "all") String stateParam,
@@ -33,16 +47,25 @@ public class BookingController {
 		return bookingClient.getBookings(userId, state, from, size);
 	}
 
-	@PostMapping
-	public ResponseEntity<Object> bookItem(@RequestHeader("X-Sharer-User-Id") long userId,
-			@RequestBody @Valid BookItemRequestDto requestDto) {
-		log.info("Creating booking {}, userId={}", requestDto, userId);
-		return bookingClient.bookItem(userId, requestDto);
+	@PatchMapping("/{bookingId}")
+	public ResponseEntity<Object> changeStatus(@RequestHeader("X-Sharer-User-Id") Long userId,
+											   @PathVariable Long bookingId,
+											   @RequestParam(value = "approved") String approved) {
+		log.info("смена статуса бронирования Id = {}", bookingId);
+		return bookingClient.changeStatus(userId, bookingId, approved);
 	}
 
-	@GetMapping("/{bookingId}")
-	public ResponseEntity<Object> getBooking(@RequestHeader("X-Sharer-User-Id") long userId,
-			@PathVariable Long bookingId) {
-		log.info("Get booking {}, userId={}", bookingId, userId);
-		return bookingClient.getBooking(userId, bookingId);
-	}}
+	@GetMapping("/owner")
+	public ResponseEntity<Object> getBookingOwner(@RequestHeader("X-Sharer-User-Id") Long userId,
+												  @RequestParam(name = "state", defaultValue = "all")
+												  String stateParam,
+												  @PositiveOrZero @RequestParam(name = "from", defaultValue = "0")
+												  Integer from,
+												  @Positive @RequestParam(name = "size", defaultValue = "10")
+												  Integer size) {
+		log.info("Получение бронирования владельца с id = {}", userId);
+		BookingState state = BookingState.from(stateParam)
+				.orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateParam));
+		return bookingClient.getBookingOwner(userId, state, from, size);
+	}
+	}

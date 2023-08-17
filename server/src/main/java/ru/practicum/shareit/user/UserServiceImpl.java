@@ -1,5 +1,6 @@
 package ru.practicum.shareit.user;
 
+import io.micrometer.core.lang.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -41,14 +42,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDto updateUser(long id, UserDto userDto) {
+    public UserDto updateUser(Long id, UserDto userDto) {
         User user = UserMapper.toUser(userDto);
         user.setId(id);
         Optional<User> userDbOptional = userStorage.findById(id);
         if (userDbOptional.isEmpty()) {
             throw new AlreadyExistException("Пользователь с id = " + id + " не найден");
-        } else if (!checkUserEmail(userDto.getEmail(), id)) {
-            throw new ConflictException("Электронная почта уже занята");
+        }  else if (userDto.getEmail() != null) {
+            if (!checkUserEmail(userDto.getEmail(), id)) {
+                throw new ConflictException("Электронная почта уже занята");
+            }
         }
         User userDb = userDbOptional.get();
         if (user.getName() != null) {
@@ -62,13 +65,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto getUserById(long id) {
+    public UserDto getUserById(Long id) {
         return UserMapper.toUserDto(userStorage.findById(id));
     }
 
     @Override
     @Transactional(readOnly = false)
-    public void deleteUserById(long id) {
+    public void deleteUserById(Long id) {
         Optional<User> userDb = userStorage.findById(Long.valueOf(id));
         if (userDb.isPresent()) {
             userStorage.deleteById(id);
@@ -83,7 +86,7 @@ public class UserServiceImpl implements UserService {
         return UserMapper.toListUserDto(userStorage.findAll());
     }
 
-    public boolean checkUserEmail(String email, Long id) {
+    public boolean checkUserEmail(@Nullable String email, Long id) {
         log.trace("Вызов метода checkUserEmail с email = {}, id = {}", email, id);
         List<User> sameEmailUsers = userStorage.findByEmailContainingIgnoreCase(email);
         if (sameEmailUsers.isEmpty())

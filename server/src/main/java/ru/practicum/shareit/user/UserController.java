@@ -1,6 +1,7 @@
 package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.exceptions.AlreadyExistException;
@@ -8,9 +9,11 @@ import ru.practicum.shareit.exceptions.ConflictException;
 import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.user.dto.UserDto;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping(path = "/users")
 @RequiredArgsConstructor
@@ -19,27 +22,38 @@ public class UserController {
 
     @PostMapping
     public UserDto createUser(@RequestBody UserDto userDto) {
+        log.info("*************************************************************************************************************************");
+        log.info("           Добавление пользователя  = {}", userDto);
         return userService.createUser(userDto);
     }
 
-    @PatchMapping("/{id}")
-    public UserDto updateUser(@RequestBody UserDto userDto, @PathVariable long id) {
-        return userService.updateUser(id, userDto);
+    @PatchMapping("/{userId}")
+    public UserDto updateUser(@PathVariable Long userId,@RequestBody UserDto userDto) {
+        log.info("*************************************************************************************************************************");
+        log.info("           Обновление пользователя с Id = {}", userId);
+        log.info("           UserDto = {}", userDto);
+        return userService.updateUser(userId, userDto);
     }
 
-    @GetMapping("/{id}")
-    public UserDto getUserById(@PathVariable long id) {
-        return userService.getUserById(id);
+    @GetMapping("/{userId}")
+    public UserDto getUserById(@PathVariable Long userId) {
+        log.info("*************************************************************************************************************************");
+        log.info("           Получение пользователя с Id = {}", userId);
+        return userService.getUserById(userId);
     }
 
     @GetMapping
     public List<UserDto> getAllUser() {
+        log.info("*************************************************************************************************************************");
+        log.info("           Получение всех пользователей");
         return userService.getAllUser();
     }
 
-    @DeleteMapping(value = "/{id}")
-    public void deleteUserById(@PathVariable Long id) {
-        userService.deleteUserById(id);
+    @DeleteMapping(value = "/{userId}")
+    public void deleteUserById(@PathVariable Long userId) {
+        log.info("*************************************************************************************************************************");
+        log.info("           Удаление пользователя с Id = {}", userId);
+        userService.deleteUserById(userId);
     }
 
     @ExceptionHandler
@@ -61,4 +75,5 @@ public class UserController {
         return Map.of("error", "Ошибка",
                 "errorMessage", e.getMessage());
     }
+
 }

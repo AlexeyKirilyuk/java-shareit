@@ -1,8 +1,8 @@
 package ru.practicum.shareit.client;
-
 import java.util.List;
 import java.util.Map;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -12,6 +12,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
+@Slf4j
 public class BaseClient {
     protected final RestTemplate rest;
 
@@ -79,15 +80,25 @@ public class BaseClient {
         return makeAndSendRequest(HttpMethod.DELETE, path, userId, parameters, null);
     }
 
-    private <T> ResponseEntity<Object> makeAndSendRequest(HttpMethod method, String path, Long userId, @Nullable Map<String, Object> parameters, @Nullable T body) {
+    private <T> ResponseEntity<Object> makeAndSendRequest(HttpMethod method,
+                                                          String path,
+                                                          Long userId,
+                                                          @Nullable Map<String, Object> parameters,
+                                                          @Nullable T body) {
         HttpEntity<T> requestEntity = new HttpEntity<>(body, defaultHeaders(userId));
 
         ResponseEntity<Object> shareitServerResponse;
         try {
             if (parameters != null) {
+                log.info("Запрос на Server: path = {}, method = {}, requestEntity = {}, Object.class = {}, parameters = {}",
+                                            path, method, requestEntity, Object.class, parameters);
                 shareitServerResponse = rest.exchange(path, method, requestEntity, Object.class, parameters);
+                log.info("Ответ Server = {}", shareitServerResponse);
             } else {
+                log.info("Запрос на Server: path = {}, method = {}, requestEntity = {}, Object.class = {}",
+                        path, method, requestEntity, Object.class);
                 shareitServerResponse = rest.exchange(path, method, requestEntity, Object.class);
+                log.info("Ответ Server = {}", shareitServerResponse);
             }
         } catch (HttpStatusCodeException e) {
             return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsByteArray());
