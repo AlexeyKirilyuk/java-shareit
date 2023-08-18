@@ -9,8 +9,8 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>shareit-gateway</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <artifactId>gateway</artifactId>
+    <version>image</version>
 
     <name>ShareIt Gateway</name>
 
